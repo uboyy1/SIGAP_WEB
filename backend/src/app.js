@@ -30,34 +30,31 @@ app.set('trust proxy', 1);
 
 const requestTimeoutMs = Number(process.env.REQUEST_TIMEOUT_MS || 30000);
 const mutatingMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
-const parseOrigins = (value) => String(value || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const configuredOrigins = [
-  ...parseOrigins(process.env.FRONTEND_URL),
-  ...parseOrigins(process.env.FRONTEND_URLS)
-];
-const allowedOrigins = Array.from(new Set([
-  ...configuredOrigins,
+const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:3000'
-].filter(Boolean)));
-const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS === 'true';
+  'https://sigap-pdam.vercel.app',
+  'https://sigap-vert.vercel.app',
+  'https://sigapweb-production.up.railway.app'
+];
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
-  if (allowedOrigins.includes(origin)) return true;
-  if (!allowVercelPreviews) return false;
+  return allowedOrigins.includes(origin);
+};
 
-  try {
-    const parsed = new URL(origin);
-    return parsed.protocol === 'https:' && parsed.hostname.endsWith('.vercel.app');
-  } catch {
-    return false;
-  }
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    logger.warn('CORS blocked request', { origin });
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 const sanitizeValue = (value) => {
@@ -119,29 +116,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cors(corsOptions));
+app.options('*', cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-
-    if (isAllowedOrigin(origin) || process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      logger.warn('CORS blocked request', { origin });
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 600
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(generalLimiter);
 
 app.use((req, res, next) => {
