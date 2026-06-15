@@ -70,7 +70,7 @@ function GuideIcon({ type = "check" }) {
 
 export default function PelangganReportGuide({ onNavigate }) {
   return (
-    <main className="bg-[#eef6ff] px-5 py-10 sm:px-8 lg:px-16 lg:py-14 xl:px-24">
+    <main className="bg-[#eef6ff] px-4 py-8 sm:px-8 sm:py-10 lg:px-16 lg:py-14 xl:px-24">
       <div className="mx-auto max-w-[1120px] space-y-6">
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_18px_48px_rgba(15,58,125,0.08)]">
           <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr] lg:p-10">
@@ -84,7 +84,7 @@ export default function PelangganReportGuide({ onNavigate }) {
               <button
                 type="button"
                 onClick={() => onNavigate?.("create-report")}
-                className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2563eb] px-6 text-sm font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8]"
+                className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#2563eb] px-6 text-sm font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8] sm:w-auto"
               >
                 Buat Laporan Sekarang
               </button>
@@ -94,11 +94,11 @@ export default function PelangganReportGuide({ onNavigate }) {
               <p className="text-sm font-extrabold text-[#12304f]">Data yang wajib disiapkan</p>
               <div className="mt-4 grid gap-3">
                 {requiredItems.map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm">
+                  <div key={item} className="flex min-w-0 items-start gap-3 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm sm:items-center">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                       <GuideIcon />
                     </span>
-                    <span>{item}</span>
+                    <span className="min-w-0 break-words">{item}</span>
                   </div>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export default function PelangganReportGuide({ onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate?.("notifications")}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-lg bg-white px-5 text-sm font-extrabold text-[#12304f] transition-transform hover:-translate-y-0.5"
+              className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-lg bg-white px-5 text-center text-sm font-extrabold text-[#12304f] transition-transform hover:-translate-y-0.5 sm:w-auto"
             >
               Cek Notifikasi
             </button>

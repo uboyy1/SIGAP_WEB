@@ -268,7 +268,7 @@ export default function PelangganReportDetail({
   };
 
   return (
-    <main className="bg-[#eef6ff] px-5 py-8 sm:px-8 lg:px-16 lg:py-10 xl:px-24">
+    <main className="bg-[#eef6ff] px-4 py-8 sm:px-8 lg:px-16 lg:py-10 xl:px-24">
       <article id={`laporan-${report.id}`} className="mx-auto max-w-[1180px] overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_14px_38px_rgba(15,58,125,0.08)] ring-1 ring-white">
         <div className="flex flex-col gap-5 p-5 sm:p-6 lg:p-7">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -287,12 +287,12 @@ export default function PelangganReportDetail({
           <div className="space-y-5">
             <div>
               <p className="text-sm font-extrabold text-[#12304f]">Kategori gangguan:</p>
-              <p className="mt-2 text-sm font-normal leading-7 text-slate-600">{report.category}</p>
+              <p className="mt-2 break-words text-sm font-normal leading-7 text-slate-600">{report.category}</p>
             </div>
 
             <div>
               <p className="text-sm font-extrabold text-[#12304f]">Deskripsi Gangguan:</p>
-              <p className="mt-2 whitespace-pre-line text-sm font-normal leading-7 text-slate-600">{report.excerpt}</p>
+              <p className="mt-2 whitespace-pre-line break-words text-sm font-normal leading-7 text-slate-600">{report.excerpt}</p>
             </div>
 
             <div className="border-t border-slate-100 pt-4">
@@ -323,7 +323,7 @@ export default function PelangganReportDetail({
           </div>
 
           <div className="grid gap-3 border-y border-slate-100 py-4 text-sm font-semibold text-slate-500 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={handleLike}
@@ -414,7 +414,7 @@ export default function PelangganReportDetail({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-12 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-base font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#1d4ed8] hover:shadow-[0_16px_34px_rgba(37,99,235,0.30)] focus:outline-none focus:ring-4 focus:ring-sky-200"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 text-center text-sm font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#1d4ed8] hover:shadow-[0_16px_34px_rgba(37,99,235,0.30)] focus:outline-none focus:ring-4 focus:ring-sky-200 sm:w-auto sm:text-base"
         >
           <DetailIcon name="back" />
           Kembali Ke Beranda

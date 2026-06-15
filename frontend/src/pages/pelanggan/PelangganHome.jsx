@@ -395,7 +395,7 @@
 
           <div className="text-sm">
             <p className="font-extrabold text-[#12304f]">Kategori gangguan:</p>
-            <p className="mt-1 truncate text-slate-700">{report.category}</p>
+            <p className="mt-1 break-words text-slate-700">{report.category}</p>
           </div>
 
           <div>
@@ -426,7 +426,7 @@
                 Dilaporkan: {report.date}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-slate-500">
+            <div className="flex flex-wrap items-center gap-2 text-slate-500 sm:justify-end">
               <button
                 type="button"
                 onClick={(event) => {
@@ -434,7 +434,7 @@
                   handleLike();
                 }}
                 aria-pressed={isLiked}
-                className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-200 ${
+                className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 py-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-200 ${
                   isLiked
                     ? "bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                     : "text-slate-500 hover:bg-sky-50 hover:text-[#0D6EFD]"
@@ -451,7 +451,7 @@
                   event.stopPropagation();
                   handleCommentToggle();
                 }}
-                className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors hover:bg-sky-50 hover:text-[#0D6EFD] focus:outline-none focus:ring-2 focus:ring-sky-200"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 py-1 transition-colors hover:bg-sky-50 hover:text-[#0D6EFD] focus:outline-none focus:ring-2 focus:ring-sky-200"
               >
                 <ReportMetaIcon name="message" />
                 {report.comments} komentar
@@ -498,17 +498,17 @@
                 className="h-20 w-full resize-none rounded-lg border border-sky-100 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
                 placeholder="Tulis komentar..."
               />
-              <div className="mt-3 flex justify-end gap-2">
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={() => {
                     setShowComments(false);
                   }}
-                  className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                  className="inline-flex min-h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50"
                 >
                   Batal
                 </button>
-                <button type="button" onClick={handleComment} disabled={submittingComment} className="inline-flex min-h-9 items-center rounded-lg bg-[#0D6EFD] px-4 text-xs font-bold text-white shadow-sm hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-70">
+                <button type="button" onClick={handleComment} disabled={submittingComment} className="inline-flex min-h-9 items-center justify-center rounded-lg bg-[#0D6EFD] px-4 text-xs font-bold text-white shadow-sm hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-70">
                   {submittingComment ? "Mengirim..." : "Kirim Komentar"}
                 </button>
               </div>
@@ -619,7 +619,7 @@
                 type="button"
                 key={feature.id}
                 onClick={() => setActiveFeatureId(feature.id)}
-                className={`min-h-11 rounded-full px-5 text-sm font-extrabold transition-all sm:px-6 sm:text-base ${
+                className={`min-h-11 w-full rounded-full px-5 text-sm font-extrabold transition-all sm:w-auto sm:px-6 sm:text-base ${
                   activeFeature.id === feature.id
                     ? "bg-white text-[#063b9f] shadow-[0_14px_30px_rgba(2,38,113,0.18)]"
                     : "text-white hover:bg-white/12"
@@ -630,8 +630,8 @@
             ))}
           </div>
 
-          <div className="group relative mx-auto mt-12 min-h-[460px] w-full max-w-[1060px] overflow-hidden rounded-3xl bg-[#022173] shadow-[0_30px_90px_rgba(2,38,113,0.24)] ring-1 ring-white/14 transition-transform duration-500 hover:-translate-y-1 lg:min-h-[430px]">
-            <div className="relative h-[300px] overflow-hidden bg-[#022173] lg:absolute lg:inset-0 lg:h-full">
+          <div className="group relative mx-auto mt-10 min-h-[420px] w-full max-w-[1060px] overflow-hidden rounded-2xl bg-[#022173] shadow-[0_30px_90px_rgba(2,38,113,0.24)] ring-1 ring-white/14 transition-transform duration-500 hover:-translate-y-1 sm:mt-12 sm:rounded-3xl lg:min-h-[430px]">
+            <div className="relative h-[240px] overflow-hidden bg-[#022173] sm:h-[300px] lg:absolute lg:inset-0 lg:h-full">
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(13,110,253,0.18)_0%,rgba(5,45,132,0.06)_52%,rgba(4,24,80,0.28)_100%)]" />
               <img
                 key={activeFeature.image}
@@ -642,7 +642,7 @@
               />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,33,115,0)_0%,rgba(2,33,115,0.08)_44%,rgba(2,33,115,0.58)_100%)]" />
             </div>
-            <div className="relative z-10 mx-4 mb-4 rounded-3xl bg-[#022173] px-5 py-7 text-white shadow-[0_24px_70px_rgba(3,18,60,0.28)] sm:mx-6 sm:px-8 lg:absolute lg:right-16 lg:top-1/2 lg:mx-0 lg:mb-0 lg:w-[38%] lg:-translate-y-1/2 lg:px-7 lg:py-7 xl:right-20">
+            <div className="relative z-10 mx-3 mb-3 rounded-2xl bg-[#022173] px-4 py-6 text-white shadow-[0_24px_70px_rgba(3,18,60,0.28)] sm:mx-6 sm:mb-6 sm:rounded-3xl sm:px-8 sm:py-7 lg:absolute lg:right-10 lg:top-1/2 lg:mx-0 lg:mb-0 lg:w-[42%] lg:-translate-y-1/2 lg:px-7 lg:py-7 xl:right-20 xl:w-[38%]">
               <h3 className="text-2xl font-extrabold leading-tight sm:text-3xl lg:text-[34px]">{activeFeature.title}</h3>
               {activeFeature.text ? (
                 <p className="mt-4 max-w-xl text-xs font-semibold leading-5 text-white/92 sm:text-sm">{activeFeature.text}</p>
@@ -674,7 +674,7 @@
     };
 
     return (
-      <section className="relative isolate min-h-[108svh] w-full max-w-[100vw] overflow-hidden bg-[#053a9a] text-white">
+      <section className="relative isolate min-h-[100svh] w-full max-w-[100vw] overflow-hidden bg-[#053a9a] text-white sm:min-h-[104svh] lg:min-h-[108svh]">
         <div className="absolute inset-0 h-full w-full overflow-hidden bg-gradient-to-br from-[#053a9a] via-[#0D6EFD] to-[#1E88E5] shadow-[0_24px_80px_rgba(13,110,253,0.28)]">
           <img
             src={heroBanner}
@@ -695,12 +695,12 @@
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto grid min-h-[108svh] max-w-[1520px] grid-cols-1 items-center px-5 pb-28 pt-28 sm:px-8 sm:pt-32 lg:grid-cols-[0.9fr_1.1fr] lg:px-16 lg:pb-32 lg:pt-36 xl:px-24 2xl:px-28">
+        <div className="relative z-10 mx-auto grid min-h-[100svh] max-w-[1520px] grid-cols-1 items-center px-5 pb-24 pt-24 sm:min-h-[104svh] sm:px-8 sm:pb-28 sm:pt-32 lg:min-h-[108svh] lg:grid-cols-[0.9fr_1.1fr] lg:px-16 lg:pb-32 lg:pt-36 xl:px-24 2xl:px-28">
           <div className="max-w-2xl animate-fadeIn">
-            <h1 className="text-4xl font-extrabold leading-[1.08] text-white drop-shadow-sm sm:text-5xl lg:text-6xl">
+            <h1 className="text-[2rem] font-extrabold leading-[1.1] text-white drop-shadow-sm sm:text-5xl lg:text-6xl">
               Laporkan Gangguan Air dengan Cepat dan Mudah
             </h1>
-            <p className="mt-6 max-w-xl text-base font-medium leading-8 text-white/86 sm:text-lg">
+            <p className="mt-5 max-w-xl text-sm font-medium leading-7 text-white/86 sm:mt-6 sm:text-lg sm:leading-8">
               SIGAP membantu pelanggan PDAM melaporkan gangguan air secara online kapanpun dan dimanapun, memantau progres penanganan, dan memperoleh informasi status laporan secara transparan dan real-time.
             </p>
             {showActions ? (
@@ -708,7 +708,7 @@
                 <button
                   type="button"
                   onClick={scrollToReport}
-                  className="group relative inline-flex min-h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-[#0D6EFD] to-[#28A8FF] px-5 py-3 text-sm font-bold text-white shadow-[0_14px_32px_rgba(13,110,253,0.30)] ring-1 ring-white/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(13,110,253,0.38)] focus:outline-none focus:ring-4 focus:ring-sky-300/35 sm:min-w-[252px]"
+                  className="group relative inline-flex min-h-12 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-[#0D6EFD] to-[#28A8FF] px-5 py-3 text-sm font-bold text-white shadow-[0_14px_32px_rgba(13,110,253,0.30)] ring-1 ring-white/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(13,110,253,0.38)] focus:outline-none focus:ring-4 focus:ring-sky-300/35 sm:w-auto sm:min-w-[252px]"
                 >
                   <span className="absolute inset-0 bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,0.22)_42%,transparent_68%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-white/18 ring-1 ring-white/25 transition-transform duration-300 group-hover:scale-105">
@@ -716,12 +716,12 @@
                       <path d="M12 5v14M5 12h14" />
                     </svg>
                   </span>
-                  <span className="relative whitespace-nowrap">Buat Laporan Sekarang</span>
+                  <span className="relative text-center sm:whitespace-nowrap">Buat Laporan Sekarang</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => onNavigate?.("report-guide")}
-                  className="group relative inline-flex min-h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/45 bg-white/12 px-5 py-3 text-sm font-bold text-white shadow-[0_14px_32px_rgba(2,38,113,0.20)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-white/65 hover:bg-white/18 focus:outline-none focus:ring-4 focus:ring-white/25 sm:min-w-[270px]"
+                  className="group relative inline-flex min-h-12 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/45 bg-white/12 px-5 py-3 text-sm font-bold text-white shadow-[0_14px_32px_rgba(2,38,113,0.20)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-white/65 hover:bg-white/18 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto sm:min-w-[270px]"
                 >
                   <span className="absolute inset-0 bg-white/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-white/14 ring-1 ring-white/30 transition-transform duration-300 group-hover:scale-105">
@@ -730,7 +730,7 @@
                       <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z" />
                     </svg>
                   </span>
-                  <span className="relative whitespace-nowrap">Pelajari Cara Pelaporan</span>
+                  <span className="relative text-center sm:whitespace-nowrap">Pelajari Cara Pelaporan</span>
                 </button>
               </div>
             ) : null}
@@ -1040,7 +1040,7 @@
                     return (
                       <label
                         key={item.id}
-                        className="flex cursor-pointer items-center gap-2 py-1.5 font-normal text-slate-700"
+                        className="flex min-w-0 cursor-pointer items-start gap-2 py-1.5 font-normal text-slate-700 sm:items-center"
                       >
                         <input
                           type="radio"
@@ -1052,12 +1052,12 @@
                             updateForm("categoryName", item.nama_kategori);
                             if (!isCustomCategory(item.nama_kategori)) updateForm("customCategory", "");
                           }}
-                          className="accent-[#0D6EFD]"
+                          className="mt-1 shrink-0 accent-[#0D6EFD] sm:mt-0"
                         />
-                        <span>{item.nama_kategori}</span>
-                        <span className="group relative inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[11px] font-extrabold text-[#0D6EFD] ring-1 ring-sky-100" tabIndex={0} aria-label={`Informasi ${item.nama_kategori}`}>
+                        <span className="min-w-0 flex-1 break-words">{item.nama_kategori}</span>
+                        <span className="group relative mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[11px] font-extrabold text-[#0D6EFD] ring-1 ring-sky-100 sm:mt-0" tabIndex={0} aria-label={`Informasi ${item.nama_kategori}`}>
                           ?
-                          <span className="pointer-events-none absolute left-1/2 top-7 z-20 hidden w-72 -translate-x-1/2 rounded-lg bg-[#12304f] px-3 py-2 text-left text-xs font-semibold leading-5 text-white shadow-xl group-hover:block group-focus:block">
+                          <span className="pointer-events-none absolute right-0 top-7 z-20 hidden w-[min(18rem,calc(100vw-4rem))] rounded-lg bg-[#12304f] px-3 py-2 text-left text-xs font-semibold leading-5 text-white shadow-xl group-hover:block group-focus:block sm:left-1/2 sm:right-auto sm:w-72 sm:-translate-x-1/2">
                             <span className="block font-extrabold">{item.nama_kategori}</span>
                             <span className="mt-1 block font-semibold text-white/85">{categoryInfo.text}</span>
                             <span className="mt-2 block font-normal text-white/75">{categoryInfo.example}</span>
@@ -1155,7 +1155,7 @@
               </label>
               {formErrors.photo ? <p className={errorText}>{formErrors.photo}</p> : null}
               </div>
-              <button type="button" onClick={handleContinueReview} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2563eb] px-10 py-3 font-bold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8]">
+              <button type="button" onClick={handleContinueReview} className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#2563eb] px-10 py-3 font-bold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8] sm:w-auto">
                 Lanjutkan
               </button>
             </div>
@@ -1180,15 +1180,17 @@
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <p className="mb-3 font-bold text-[#123b5a]">Opsi Privasi</p>
-              <label className="mr-6 font-normal text-slate-700"><input type="radio" name="privasi" value="tidak_ada" checked={formData.privacy === "tidak_ada"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Publik</label>
-              <label className="mr-6 font-normal text-slate-700"><input type="radio" name="privasi" value="anonim" checked={formData.privacy === "anonim"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Anonim</label>
-              <label className="font-normal text-slate-700"><input type="radio" name="privasi" value="rahasia" checked={formData.privacy === "rahasia"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Rahasia</label>
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <label className="font-normal text-slate-700"><input type="radio" name="privasi" value="tidak_ada" checked={formData.privacy === "tidak_ada"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Publik</label>
+                <label className="font-normal text-slate-700"><input type="radio" name="privasi" value="anonim" checked={formData.privacy === "anonim"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Anonim</label>
+                <label className="font-normal text-slate-700"><input type="radio" name="privasi" value="rahasia" checked={formData.privacy === "rahasia"} onChange={(event) => updateForm("privacy", event.target.value)} className="mr-2 accent-[#0D6EFD]" />Rahasia</label>
+              </div>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-              <button type="button" onClick={() => setStep(1)} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-3 font-bold text-[#123b5a] shadow-sm transition-colors hover:bg-slate-50">
+              <button type="button" onClick={() => setStep(1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-3 font-bold text-[#123b5a] shadow-sm transition-colors hover:bg-slate-50 sm:w-auto">
                 Kembali
               </button>
-              <button type="button" onClick={handleSubmit} disabled={submitting} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2563eb] px-10 py-3 font-bold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-70">
+              <button type="button" onClick={handleSubmit} disabled={submitting} className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#2563eb] px-10 py-3 font-bold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto">
                 {submitting ? "Mengirim..." : "Kirim"}
               </button>
             </div>
@@ -1218,7 +1220,7 @@
             <h3 className="mt-4 text-lg font-extrabold text-[#12304f]">Laporan Terkirim</h3>
             <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">Laporan gangguan anda berhasil dikirim dan menunggu validasi</p>
             {successPhotoUrl ? (
-              <img src={successPhotoUrl} alt="Foto laporan terkirim" className="mx-auto mt-4 max-h-44 rounded-lg border border-sky-100 object-contain" />
+              <img src={successPhotoUrl} alt="Foto laporan terkirim" className="mx-auto mt-4 max-h-44 max-w-full rounded-lg border border-sky-100 object-contain" />
             ) : null}
             <button
               type="button"

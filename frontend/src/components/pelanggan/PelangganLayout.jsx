@@ -329,7 +329,7 @@ export function PelangganHeader({ user, activePage = "home", onNavigate, onLogin
             </button>
 
             {notificationOpen ? (
-              <div className="absolute right-0 top-full z-50 mt-3 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-sky-100 bg-white text-slate-700 shadow-2xl shadow-sky-950/20">
+              <div className="fixed left-3 right-3 top-[4.5rem] z-50 mt-0 overflow-hidden rounded-2xl border border-sky-100 bg-white text-slate-700 shadow-2xl shadow-sky-950/20 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[min(380px,calc(100vw-24px))]">
                 <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
                   <div>
                     <p className="text-sm font-extrabold text-[#12304f]">Notifikasi</p>
@@ -446,7 +446,7 @@ export function PelangganHeader({ user, activePage = "home", onNavigate, onLogin
               </svg>
             </button>
             {open && (
-              <div className="absolute right-0 top-full z-50 mt-3 w-[min(340px,calc(100vw-24px))] max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-sky-100 bg-white text-slate-700 shadow-2xl shadow-sky-950/20">
+              <div className="fixed left-3 right-3 top-[4.5rem] z-50 mt-0 max-h-[calc(100vh-5.25rem)] overflow-y-auto rounded-2xl border border-sky-100 bg-white text-slate-700 shadow-2xl shadow-sky-950/20 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[min(340px,calc(100vw-24px))] sm:max-h-[calc(100vh-6rem)]">
                 <div className="bg-gradient-to-br from-[#0D6EFD] to-[#0646a8] px-4 py-4 text-white">
                   <div className="flex min-w-0 items-center gap-3">
                     {user.foto ? (
@@ -542,8 +542,8 @@ export function PelangganHeader({ user, activePage = "home", onNavigate, onLogin
             })}
             {!authenticated && (
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <button onClick={onLoginClick} className="rounded-xl border border-white/55 px-4 py-3 font-bold">Masuk</button>
-                <button onClick={onRegisterClick} className="rounded-xl bg-[#0D6EFD] px-4 py-3 font-bold">Daftar</button>
+                <button onClick={() => { setMobileOpen(false); onLoginClick?.(); }} className="rounded-xl border border-white/55 px-4 py-3 font-bold">Masuk</button>
+                <button onClick={() => { setMobileOpen(false); onRegisterClick?.(); }} className="rounded-xl bg-[#0D6EFD] px-4 py-3 font-bold">Daftar</button>
               </div>
             )}
           </nav>
@@ -567,11 +567,11 @@ export function PelangganFooter({ activePage, onNavigate }) {
       <div className="max-w-6xl mx-auto px-4 py-7 grid grid-cols-1 md:grid-cols-3 gap-6 text-center text-xs text-gray-700 items-center">
         <div>
           <p className="mb-3">Download aplikasi mobile SIGAP!</p>
-          <div className="flex h-16 justify-center gap-2 items-center">
-            <a href="https://play.google.com/store" target="_blank" rel="noreferrer" className="inline-flex h-14 items-center transition-transform hover:scale-105">
+          <div className="flex min-h-16 flex-wrap items-center justify-center gap-2">
+            <a href="https://play.google.com/store" target="_blank" rel="noreferrer" className="inline-flex h-12 items-center transition-transform hover:scale-105 sm:h-14">
               <img src={footerLogos.googlePlay} alt="Get it on Google Play" className="h-full w-auto object-contain" />
             </a>
-            <a href="https://www.apple.com/app-store/" target="_blank" rel="noreferrer" className="inline-flex h-10 items-center transition-transform hover:scale-105">
+            <a href="https://www.apple.com/app-store/" target="_blank" rel="noreferrer" className="inline-flex h-9 items-center transition-transform hover:scale-105 sm:h-10">
               <img src={footerLogos.appStore} alt="Download on the App Store" className="h-full w-auto object-contain" />
             </a>
           </div>

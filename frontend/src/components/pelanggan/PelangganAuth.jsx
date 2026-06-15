@@ -36,13 +36,13 @@ export function PelangganLoginModal({ onClose, onLogin, onRegister, onForgot }) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/20 flex items-start justify-center pt-24 px-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/20 px-4 py-8 sm:pt-24">
       <div className="w-full max-w-2xl bg-white shadow-xl border border-gray-300">
         <div className="relative py-5 border-b border-gray-300 text-center">
           <h2 className="text-2xl font-bold">MASUK</h2>
           <button onClick={onClose} className="absolute right-3 top-3 w-6 h-6 border border-gray-400 text-gray-500 text-lg leading-none">x</button>
         </div>
-        <form onSubmit={handleSubmit} className="px-20 py-8 space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5 px-5 py-8 sm:px-10 md:px-20">
           {error && <div className="border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
           <label className="block text-sm font-semibold">
             Email, No. telp, atau username
@@ -52,7 +52,7 @@ export function PelangganLoginModal({ onClose, onLogin, onRegister, onForgot }) 
             <span className="flex justify-between">Password <button type="button" onClick={onForgot} className="text-sky-500 font-normal">Lupa password?</button></span>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full h-11 border border-gray-400 px-3 font-normal" required />
           </label>
-          <button disabled={loading} className="w-full h-12 bg-[#12304f] text-white rounded-md font-bold disabled:opacity-60">{loading ? "MEMPROSES..." : "MASUK"}</button>
+          <button disabled={loading} className="h-12 w-full rounded-md bg-[#12304f] text-white font-bold disabled:opacity-60">{loading ? "MEMPROSES..." : "MASUK"}</button>
         </form>
         <div className="border-t border-gray-300 text-center py-5 text-sm">
           <p className="text-gray-500">Anda belum memiliki akun?</p>
@@ -374,7 +374,7 @@ export function PelangganForgotPassword({ onBack }) {
         <button
           type="button"
           onClick={onBack}
-          className="mt-7 inline-flex items-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
+          className="mt-7 inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-center text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />

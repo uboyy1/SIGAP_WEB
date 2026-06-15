@@ -188,7 +188,7 @@ function ProfileReportCard({ report, onClick, onDelete }) {
 
         <div className="text-sm">
           <p className="font-extrabold text-[#12304f]">Kategori gangguan:</p>
-          <p className="mt-1 truncate text-slate-700">{report.category}</p>
+          <p className="mt-1 break-words text-slate-700">{report.category}</p>
         </div>
 
         <div>
@@ -232,8 +232,8 @@ function ProfileHero({
   return (
     <section className="relative overflow-hidden bg-[#0D6EFD] text-white shadow-sm">
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.16)_0,rgba(255,255,255,0.05)_38%,transparent_39%),linear-gradient(135deg,transparent_0%,rgba(3,37,106,0.18)_51%,transparent_52%)] bg-[size:420px_420px,220px_220px]" />
-      <div className="relative mx-auto flex min-h-[250px] max-w-6xl flex-col justify-end gap-6 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-center">
+      <div className="relative mx-auto flex min-h-[250px] max-w-6xl flex-col justify-end gap-6 px-4 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+        <div className="flex min-w-0 flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:text-left">
           <div className="flex w-fit shrink-0 flex-col items-center gap-2">
             <div className={`relative w-fit ${avatarControls ? "pb-3" : ""}`}>
               <ProfileAvatar profile={profile} previewSrc={avatarPreviewSrc} className="h-24 w-24 sm:h-28 sm:w-28" />
@@ -247,14 +247,14 @@ function ProfileHero({
           </div>
           {!hideIdentity ? (
             <div className="min-w-0">
-              <h1 className="truncate text-2xl font-extrabold sm:text-3xl">{displayName}</h1>
-              <p className="mt-2 text-sm font-extrabold text-sky-100">{subscriptionNumber}</p>
+              <h1 className="break-words text-2xl font-extrabold sm:truncate sm:text-3xl">{displayName}</h1>
+              <p className="mt-2 break-words text-sm font-extrabold text-sky-100">{subscriptionNumber}</p>
             </div>
           ) : null}
         </div>
         <button
           onClick={onAction}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-white/80 px-6 text-xs font-extrabold tracking-wide text-white transition-colors hover:bg-white hover:text-[#164b9d]"
+          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-lg border border-white/80 px-6 text-xs font-extrabold tracking-wide text-white transition-colors hover:bg-white hover:text-[#164b9d] sm:w-auto"
         >
           {actionLabel}
         </button>
@@ -296,7 +296,7 @@ function ProfileSideNav({ active, onNavigate }) {
 
 function StatusTabs({ active, onChange }) {
   return (
-    <div className="flex gap-2 overflow-x-auto rounded-xl border border-sky-100 bg-white p-1 text-xs shadow-sm">
+    <div className="flex w-full max-w-full gap-2 overflow-x-auto rounded-xl border border-sky-100 bg-white p-1 text-xs shadow-sm">
       {statusTabs.map((tab) => (
         <button
           key={tab}
@@ -358,7 +358,7 @@ function ConfirmPanel({ title, message, loading, onCancel, onConfirm }) {
       <section className="w-full max-w-md rounded-xl bg-white p-5 shadow-2xl shadow-slate-950/25">
         <h3 className="text-lg font-extrabold text-[#12304f]">{title}</h3>
         <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">{message}</p>
-        <div className="mt-5 flex justify-end gap-2">
+        <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button type="button" onClick={onCancel} disabled={loading} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-600 hover:bg-slate-50 disabled:opacity-60">
             Batal
           </button>
@@ -428,7 +428,7 @@ export function PelangganDashboard({
   return (
     <>
       <ProfileHero profile={profile} actionLabel="UBAH" onAction={() => onNavigate("edit-profile")} />
-      <main className="mx-auto max-w-6xl space-y-7 px-6 py-8">
+      <main className="mx-auto max-w-6xl space-y-7 px-4 py-8 sm:px-6">
         <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-xl border border-sky-100 bg-white p-5 shadow-[0_14px_38px_rgba(15,58,125,0.07)]">
             <div className="mb-4">
@@ -448,7 +448,7 @@ export function PelangganDashboard({
           <div className="rounded-xl border border-sky-100 bg-white p-5 shadow-[0_14px_38px_rgba(15,58,125,0.07)]">
             <h2 className="text-lg font-extrabold text-[#12304f]">Riwayat Laporan</h2>
             <p className="mt-1 text-sm font-semibold text-slate-500">Status laporan yang pernah anda buat.</p>
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-5 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
               {[
                 ["Semua", reportCounts.total],
                 ["Belum Diproses", reportCounts.waiting],
@@ -699,10 +699,10 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
       />
       {photoFile ? <p className="sr-only">Foto dipilih: {photoFile.name}</p> : null}
       {photoMarkedForDelete ? <p className="sr-only">Foto profil akan dihapus setelah disimpan.</p> : null}
-      <main className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-8 md:grid-cols-[190px_1fr]">
+      <main className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[190px_1fr] md:gap-8">
         <ProfileSideNav active="edit-profile" onNavigate={onNavigate} />
         <section className="rounded-xl border border-sky-100 bg-white p-5 shadow-[0_14px_38px_rgba(15,58,125,0.07)] sm:p-7">
-          <h1 className="border-b border-sky-100 pb-3 text-3xl font-extrabold text-[#12304f]">Ubah Profil</h1>
+          <h1 className="border-b border-sky-100 pb-3 text-2xl font-extrabold text-[#12304f] sm:text-3xl">Ubah Profil</h1>
           <div className="space-y-7 pt-6">
             {error ? <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</div> : null}
             {saving && uploadProgress > 0 ? (
@@ -792,7 +792,7 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
               type="button"
               onClick={() => onNavigate("dashboard")}
               disabled={saving}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 text-sm font-extrabold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 text-sm font-extrabold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               Batal
             </button>
@@ -800,7 +800,7 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
               type="button"
               disabled={saving}
               onClick={handleSave}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0D6EFD] px-7 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(13,110,253,0.22)] transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#0D6EFD] px-7 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(13,110,253,0.22)] transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               <SaveIcon />
               {saving ? "Menyimpan..." : "Simpan"}
@@ -909,14 +909,14 @@ export function PelangganNotifications({ profile, onNavigate }) {
   return (
     <>
       <ProfileHero profile={profile} onAction={() => onNavigate("dashboard")} />
-      <main className="mx-auto min-h-[300px] max-w-5xl px-6 py-10">
+      <main className="mx-auto min-h-[300px] max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_16px_42px_rgba(15,58,125,0.08)]">
           <div className="flex flex-col gap-4 border-b border-sky-100 bg-gradient-to-r from-white to-sky-50/80 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div className="min-w-0">
               <h1 className="text-2xl font-extrabold text-[#12304f] sm:text-3xl">Notifikasi</h1>
               <p className="mt-1 text-sm font-semibold text-slate-500">{unreadCount} notifikasi belum dibaca</p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2">
               <button
                 type="button"
                 onClick={handleMarkAllAsRead}
@@ -946,7 +946,7 @@ export function PelangganNotifications({ profile, onNavigate }) {
             <div className="mx-5 mt-5 rounded-xl border border-red-100 bg-red-50 p-4 sm:mx-6">
               <p className="font-bold text-red-700">Hapus semua notifikasi?</p>
               <p className="mt-1 text-sm text-red-600/80">Notifikasi yang dihapus tidak akan tampil lagi.</p>
-              <div className="mt-4 flex justify-end gap-2">
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
                 <button type="button" onClick={() => setDeleteConfirmOpen(false)} className="rounded-lg bg-white px-4 py-2 text-xs font-extrabold text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50">
                   Batal
                 </button>
@@ -978,8 +978,8 @@ export function PelangganNotifications({ profile, onNavigate }) {
                   >
                     <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ring-4 ${notification.is_read ? "bg-slate-300 ring-slate-100" : "bg-[#0D6EFD] ring-sky-100"}`} />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-extrabold text-[#12304f]">{notification.title}</span>
-                      <span className="mt-1 block text-sm leading-6 text-slate-600">{notification.message}</span>
+                      <span className="block break-words text-sm font-extrabold text-[#12304f]">{notification.title}</span>
+                      <span className="mt-1 block break-words text-sm leading-6 text-slate-600">{notification.message}</span>
                       <span className="mt-3 block text-xs font-bold text-slate-400">{formatRelativeTime(notification.created_at)}</span>
                     </span>
                   </button>
@@ -1100,7 +1100,7 @@ export function PelangganPassword({ profile = {}, onNavigate = () => {} }) {
   return (
     <>
       <ProfileHero profile={profile} onAction={() => onNavigate("dashboard")} />
-      <main className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-8 md:grid-cols-[190px_1fr]">
+      <main className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[190px_1fr] md:gap-8">
         <ProfileSideNav active="password" onNavigate={onNavigate} />
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_16px_42px_rgba(15,58,125,0.08)]">
         <div className="border-b border-sky-100 bg-gradient-to-r from-white to-sky-50/80 px-5 py-5 sm:px-7">
@@ -1164,12 +1164,12 @@ export function PelangganPassword({ profile = {}, onNavigate = () => {} }) {
             </label>
           </div>
 
-          <div className="mt-7 flex justify-end">
+          <div className="mt-7 flex justify-stretch sm:justify-end">
             <button
               type="button"
               onClick={handleUpdatePassword}
               disabled={saving}
-              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#0D6EFD] px-8 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(13,110,253,0.22)] transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#0D6EFD] px-8 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(13,110,253,0.22)] transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {saving ? "Menyimpan..." : "Ubah Password"}
             </button>

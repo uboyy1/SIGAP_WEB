@@ -82,9 +82,9 @@ export default function PelangganLogin({ onBack, onForgot, onLogin, onRegister, 
           <div className="mx-auto w-full max-w-[650px]">
             <h1 className="text-center text-3xl font-semibold text-[#22283a]">Masuk</h1>
 
-            <div className="mt-8 flex items-center gap-4 text-center text-sm font-medium text-[#22283a] sm:text-base">
+            <div className="mt-8 flex items-center gap-3 text-center text-xs font-medium text-[#22283a] sm:gap-4 sm:text-base">
               <span className="h-px flex-1 bg-slate-200" />
-              Masuk Dengan No Langganan PDAM
+              <span className="shrink-0">Masuk Dengan No Langganan PDAM</span>
               <span className="h-px flex-1 bg-slate-200" />
             </div>
 
@@ -170,7 +170,7 @@ export default function PelangganLogin({ onBack, onForgot, onLogin, onRegister, 
         <button
           type="button"
           onClick={onBack}
-          className="mt-7 inline-flex items-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
+          className="mt-7 inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-center text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />

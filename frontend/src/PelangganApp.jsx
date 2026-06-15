@@ -41,7 +41,7 @@ function Toast({ toast, onClose }) {
     : "border-red-100 bg-red-50 text-red-700";
 
   return (
-    <div className={`fixed right-4 top-24 z-[90] flex max-w-sm items-start gap-3 rounded-xl border px-4 py-3 text-sm font-semibold shadow-xl ${typeClass}`}>
+    <div className={`fixed left-4 right-4 top-20 z-[90] flex max-w-none items-start gap-3 rounded-xl border px-4 py-3 text-sm font-semibold shadow-xl sm:left-auto sm:top-24 sm:max-w-sm ${typeClass}`}>
       <span className="min-w-0 flex-1">{toast.message}</span>
       <button type="button" onClick={onClose} className="shrink-0 font-extrabold" aria-label="Tutup notifikasi">
         x

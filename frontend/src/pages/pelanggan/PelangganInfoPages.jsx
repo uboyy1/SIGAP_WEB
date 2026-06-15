@@ -132,7 +132,7 @@ export function PelangganTerms({ onNavigate }) {
   };
 
   return (
-    <main id="top" className="bg-[#eef6ff] px-5 py-10 sm:px-8 lg:px-16 lg:py-14 xl:px-24">
+    <main id="top" className="bg-[#eef6ff] px-4 py-8 sm:px-8 sm:py-10 lg:px-16 lg:py-14 xl:px-24">
       <div className="mx-auto max-w-[1120px] space-y-6">
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_18px_48px_rgba(15,58,125,0.08)]">
           <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.25fr_0.75fr] lg:p-10">
@@ -150,7 +150,7 @@ export function PelangganTerms({ onNavigate }) {
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0D6EFD] text-white">
                   <TermsIcon type="shield" />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-extrabold text-[#12304f]">Data Terlindungi</p>
                   <p className="mt-1 text-xs font-medium leading-5 text-slate-500">Informasi pelanggan digunakan untuk kebutuhan layanan PDAM.</p>
                 </div>
@@ -159,7 +159,7 @@ export function PelangganTerms({ onNavigate }) {
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                   <TermsIcon type="users" />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-extrabold text-[#12304f]">Pengguna Bertanggung Jawab</p>
                   <p className="mt-1 text-xs font-medium leading-5 text-slate-500">Laporan harus dibuat dengan data yang benar dan relevan.</p>
                 </div>
@@ -196,9 +196,9 @@ export function PelangganTerms({ onNavigate }) {
                         ) : null}
                         <ul className={`${group.intro ? "mt-3" : ""} grid gap-3`}>
                           {group.items.map((item, itemIndex) => (
-                            <li key={`${groupIndex}-${itemIndex}-${item}`} className="flex gap-3 text-[15px] font-normal leading-7 text-slate-600">
+                            <li key={`${groupIndex}-${itemIndex}-${item}`} className="flex min-w-0 gap-3 text-[15px] font-normal leading-7 text-slate-600">
                               <CheckMark />
-                              <span>{item}</span>
+                              <span className="min-w-0 break-words">{item}</span>
                             </li>
                           ))}
                         </ul>
@@ -229,7 +229,7 @@ export function PelangganTerms({ onNavigate }) {
             <button
               type="button"
               onClick={handleContactClick}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-lg bg-white px-5 text-sm font-extrabold text-[#12304f] transition-transform hover:-translate-y-0.5"
+              className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-lg bg-white px-5 text-sm font-extrabold text-[#12304f] transition-transform hover:-translate-y-0.5 sm:w-auto"
             >
               Hubungi Kami
             </button>
@@ -284,7 +284,7 @@ export function PelangganContact() {
   }`;
 
   return (
-    <main className="bg-[#eef6ff] px-5 py-10 sm:px-8 lg:px-16 lg:py-14 xl:px-24">
+    <main className="bg-[#eef6ff] px-4 py-8 sm:px-8 sm:py-10 lg:px-16 lg:py-14 xl:px-24">
       <section className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-[0_24px_70px_rgba(15,58,125,0.14)] ring-1 ring-white/80">
         <div className="bg-[#2563eb] px-6 py-7 text-left text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.22)] sm:px-8">
           <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">Hubungi Kami</h1>
@@ -348,7 +348,7 @@ export function PelangganContact() {
 
             <button
               type="submit"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#2563eb] px-10 text-sm font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8]"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#2563eb] px-10 text-sm font-extrabold text-white shadow-[0_12px_26px_rgba(37,99,235,0.24)] transition-colors hover:bg-[#1d4ed8] sm:w-auto"
             >
               <ContactIcon type="send" />
               Kirim

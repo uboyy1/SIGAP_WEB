@@ -99,7 +99,7 @@ export default function PelangganAbout() {
   }
 
   return (
-    <main className="bg-[#eef6ff] px-5 py-10 sm:px-8 lg:px-16 lg:py-14 xl:px-24">
+    <main className="bg-[#eef6ff] px-4 py-8 sm:px-8 sm:py-10 lg:px-16 lg:py-14 xl:px-24">
         <div className="mx-auto max-w-[1180px] space-y-8">
           <div className="text-center">
             <h1 className="text-3xl font-extrabold leading-tight text-[#12304f] sm:text-4xl">{content.title}</h1>
@@ -119,9 +119,9 @@ export default function PelangganAbout() {
                 <p className="text-sm font-extrabold text-[#12304f]">Fokus layanan</p>
                 <div className="mt-4 grid gap-3">
                   {content.focusItems.map((item) => (
-                    <div key={item} className="flex items-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm">
+                    <div key={item} className="flex min-w-0 items-start gap-3 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm sm:items-center">
                       <CheckIcon />
-                      {item}
+                      <span className="min-w-0 break-words">{item}</span>
                     </div>
                   ))}
                 </div>

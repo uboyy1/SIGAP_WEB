@@ -73,7 +73,7 @@ function TermsModal({ sections, onAccept, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
       <section className="flex max-h-[86vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_28px_90px_rgba(2,33,115,0.38)] ring-1 ring-white/80">
-        <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
+        <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-4 py-5 sm:px-6">
           <div>
             <h2 className="text-xl font-bold text-[#22283a]">Ketentuan Layanan SIGAP</h2>
             <p className="mt-1 text-sm font-medium text-slate-500">Syarat & Ketentuan Penggunaan SIGAP</p>
@@ -90,7 +90,7 @@ function TermsModal({ sections, onAccept, onClose }) {
           </button>
         </header>
 
-        <div className="overflow-y-auto px-6 py-5 text-sm leading-relaxed text-slate-700">
+        <div className="overflow-y-auto px-4 py-5 text-sm leading-relaxed text-slate-700 sm:px-6">
           {sections.map((section, index) => (
             <section key={section.title} className="mb-5 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3">
               <h3 className="font-bold text-[#252b3f]">{index + 1}. {section.title}</h3>
@@ -116,7 +116,7 @@ function TermsModal({ sections, onAccept, onClose }) {
           ))}
         </div>
 
-        <footer className="border-t border-slate-200 bg-white px-6 py-4">
+        <footer className="border-t border-slate-200 bg-white px-4 py-4 sm:px-6">
           <button
             type="button"
             onClick={onAccept}
@@ -224,9 +224,9 @@ export default function PelangganRegister({ onBack, onRegistered }) {
         <section className="w-full max-w-[900px] rounded-2xl bg-white/95 px-6 py-8 shadow-[0_28px_80px_rgba(2,33,115,0.36)] ring-1 ring-white/80 backdrop-blur sm:px-9 lg:px-11 lg:py-10">
           <div className="mx-auto w-full max-w-[760px]">
             <h1 className="text-center text-3xl font-semibold text-[#22283a]">Daftar</h1>
-            <div className="mt-8 flex items-center gap-4 text-center text-sm font-medium text-[#22283a] sm:text-base">
+            <div className="mt-8 flex items-center gap-3 text-center text-sm font-medium text-[#22283a] sm:gap-4 sm:text-base">
               <span className="h-px flex-1 bg-slate-200" />
-              Buat akun anda
+              <span className="shrink-0">Buat akun anda</span>
               <span className="h-px flex-1 bg-slate-200" />
             </div>
 
@@ -383,7 +383,7 @@ export default function PelangganRegister({ onBack, onRegistered }) {
         <button
           type="button"
           onClick={onBack}
-          className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
+          className="mt-6 inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-center text-sm font-extrabold text-white shadow-[0_16px_40px_rgba(2,33,115,0.22)] backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/16 focus:outline-none focus:ring-2 focus:ring-white/70"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
