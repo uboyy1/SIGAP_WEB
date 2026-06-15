@@ -126,9 +126,6 @@ const register = async (req, res) => {
       });
     }
 
-    const verificationToken = generateVerificationToken();
-    const verificationResultExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
     const user = await User.create({
       no_langganan,
       nama_lengkap,
@@ -140,24 +137,21 @@ const register = async (req, res) => {
       tanggal_lahir,
       alamat,
       role: 'pelanggan',
-      is_active: false,
+      is_active: true,
       is_logged_in: false,
-      email_verified_at: null,
-      email_verification_token: hashVerificationToken(verificationToken),
-      email_verification_expires_at: verificationResultExpiresAt
+      email_verified_at: new Date(),
+      email_verification_token: null,
+      email_verification_expires_at: null
     });
 
-    const verificationEmail = await sendVerificationEmail({ user, token: verificationToken });
     await savePelangganActivity(req, user, 'pelanggan_register', 'Pelanggan membuat akun baru');
 
     return res.status(201).json({
       success: true,
-      message: verificationEmail.sent
-        ? 'Registrasi berhasil. Silakan cek email untuk verifikasi akun.'
-        : 'Registrasi berhasil. Email verifikasi belum terkirim, silakan hubungi admin atau kirim ulang verifikasi.',
+      message: 'Registrasi berhasil. Silakan login menggunakan No Langganan dan kata sandi.',
       data: {
         user: sanitizeUser(user),
-        verification_email_sent: verificationEmail.sent
+        verification_email_sent: false
       }
     });
   } catch (error) {
@@ -215,11 +209,12 @@ const login = async (req, res) => {
       });
     }
 
-    if (!user.email_verified_at && user.email_verification_token) {
-      return res.status(403).json({
-        success: false,
-        code: 'EMAIL_NOT_VERIFIED',
-        message: 'Email belum diverifikasi. Silakan cek email verifikasi atau kirim ulang verifikasi.'
+    if (user.email_verification_token || user.email_verification_expires_at) {
+      await user.update({
+        email_verified_at: user.email_verified_at || new Date(),
+        email_verification_token: null,
+        email_verification_expires_at: null,
+        is_active: true
       });
     }
 
