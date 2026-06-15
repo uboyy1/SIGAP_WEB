@@ -13,7 +13,7 @@
     radial-gradient(ellipse at 75% 70%, #1035a0 0%, transparent 55%),
     linear-gradient(160deg, #020d2e 0%, #0b2a7a 50%, #041860 100%);
   color: #ffffff;
-  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--sigap-font-family);
   position: relative;
   overflow: hidden;
 }

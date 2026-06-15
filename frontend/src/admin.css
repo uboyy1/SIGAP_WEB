@@ -1,7 +1,5 @@
 /* Fungsi: Style global untuk tampilan aplikasi SIGAP. */
 /* admin.css — SIGAP Admin Panel */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
-
 :root {
   --sidebar-bg: #0e2254;
   --sidebar-width: 210px;
@@ -31,7 +29,7 @@
 
 html, body, #root {
   width: 100%; height: 100%;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
   background: var(--page-bg);
   color: var(--text-primary);
   overflow: hidden;
@@ -412,7 +410,7 @@ html, body, #root {
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 600;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
   cursor: pointer;
   border: none;
   transition: all 0.18s;
@@ -476,7 +474,7 @@ html, body, #root {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 12px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
   color: var(--text-primary);
   background: #fff;
   outline: none;
@@ -508,7 +506,7 @@ html, body, #root {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 12px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
   outline: none;
   width: 180px;
 }
@@ -549,7 +547,7 @@ html, body, #root {
   border-top: none;
   border-left: none;
   border-right: none;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
 }
 
 .tab-item:hover { color: var(--text-primary); }
@@ -643,7 +641,7 @@ html, body, #root {
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 13px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--sigap-font-family);
   color: var(--text-primary);
   background: #fff;
   outline: none;

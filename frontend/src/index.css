@@ -7,6 +7,30 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --sigap-font-family: 'Open Sans', sans-serif;
+    --sigap-h1-size: 32px;
+    --sigap-h1-weight: 700;
+    --sigap-h2-size: 24px;
+    --sigap-h2-weight: 600;
+    --sigap-h3-size: 20px;
+    --sigap-h3-weight: 600;
+    --sigap-card-title-size: 18px;
+    --sigap-card-title-weight: 600;
+    --sigap-body-size: 14px;
+    --sigap-body-weight: 400;
+    --sigap-caption-size: 12px;
+    --sigap-caption-weight: 400;
+    --sigap-button-size: 14px;
+    --sigap-button-weight: 600;
+    --sigap-sidebar-size: 14px;
+    --sigap-sidebar-weight: 500;
+    --sigap-table-header-size: 13px;
+    --sigap-table-header-weight: 600;
+    --sigap-table-content-size: 13px;
+    --sigap-table-content-weight: 400;
+  }
+
   *,
   *::before,
   *::after {
@@ -32,6 +56,9 @@
   body {
     overflow-x: clip;
     background: #053a9a;
+    font-family: var(--sigap-font-family);
+    font-size: var(--sigap-body-size);
+    font-weight: var(--sigap-body-weight);
     scrollbar-width: none;
   }
 
@@ -44,7 +71,54 @@
   input,
   textarea,
   select {
-    font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--sigap-font-family);
+  }
+
+  h1 {
+    font-size: var(--sigap-h1-size);
+    font-weight: var(--sigap-h1-weight);
+  }
+
+  h2 {
+    font-size: var(--sigap-h2-size);
+    font-weight: var(--sigap-h2-weight);
+  }
+
+  h3 {
+    font-size: var(--sigap-h3-size);
+    font-weight: var(--sigap-h3-weight);
+  }
+
+  p,
+  li,
+  label,
+  input,
+  textarea,
+  select {
+    font-size: var(--sigap-body-size);
+    font-weight: var(--sigap-body-weight);
+  }
+
+  small,
+  figcaption,
+  caption {
+    font-size: var(--sigap-caption-size);
+    font-weight: var(--sigap-caption-weight);
+  }
+
+  button {
+    font-size: var(--sigap-button-size);
+    font-weight: var(--sigap-button-weight);
+  }
+
+  table th {
+    font-size: var(--sigap-table-header-size);
+    font-weight: var(--sigap-table-header-weight);
+  }
+
+  table td {
+    font-size: var(--sigap-table-content-size);
+    font-weight: var(--sigap-table-content-weight);
   }
 
   select {
@@ -58,6 +132,42 @@
 
   select:focus {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 15-6-6-6 6'/%3E%3C/svg%3E");
+  }
+}
+
+@layer components {
+  .card-title,
+  .sigap-card-title {
+    font-size: var(--sigap-card-title-size);
+    font-weight: var(--sigap-card-title-weight);
+  }
+
+  .caption,
+  .sigap-caption {
+    font-size: var(--sigap-caption-size);
+    font-weight: var(--sigap-caption-weight);
+  }
+
+  .sidebar,
+  .sidebar button,
+  .sidebar a,
+  .sidebar-nav,
+  .sidebar-nav button,
+  .nav-item {
+    font-size: var(--sigap-sidebar-size);
+    font-weight: var(--sigap-sidebar-weight);
+  }
+
+  .data-table th,
+  .stats-table th {
+    font-size: var(--sigap-table-header-size);
+    font-weight: var(--sigap-table-header-weight);
+  }
+
+  .data-table td,
+  .stats-table td {
+    font-size: var(--sigap-table-content-size);
+    font-weight: var(--sigap-table-content-weight);
   }
 }
 

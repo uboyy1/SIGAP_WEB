@@ -7,6 +7,7 @@
   max-width: 100vw;
   background: #eef6ff;
   color: #1f2937;
+  font-family: var(--sigap-font-family);
   overflow-x: clip;
   scrollbar-width: none;
 }
