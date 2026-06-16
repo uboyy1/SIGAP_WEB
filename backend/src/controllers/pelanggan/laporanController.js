@@ -15,6 +15,7 @@ const laporanInclude = [
   { model: KategoriGangguan, as: 'kategori', attributes: ['id', 'nama_kategori'] },
   { model: User, as: 'pelanggan', attributes: ['id', 'nama_lengkap', 'no_langganan', 'foto_base64'] }
 ];
+const publicVisibleStatuses = ['divalidasi', 'dalam_penanganan', 'selesai'];
 
 const getPagination = (query) => {
   const page = Math.max(parseInt(query.page, 10) || 1, 1);
@@ -255,7 +256,8 @@ const getPublicLaporan = async (req, res) => {
     const { search = '', kategori = '' } = req.query;
     const { page, limit, offset } = getPagination(req.query);
     const where = {
-      opsi_privasi: { [Op.notIn]: ['rahasia', 'anonim_rahasia'] }
+      opsi_privasi: { [Op.notIn]: ['rahasia', 'anonim_rahasia'] },
+      status: { [Op.in]: publicVisibleStatuses }
     };
 
     if (kategori) where.kategori_gangguan_id = kategori;
@@ -296,7 +298,11 @@ const getPublicLaporan = async (req, res) => {
 
 const getLaporanCount = async (req, res) => {
   try {
-    const total = await Laporan.count();
+    const total = await Laporan.count({
+      where: {
+        status: { [Op.ne]: 'ditolak' }
+      }
+    });
 
     return res.status(200).json({
       success: true,

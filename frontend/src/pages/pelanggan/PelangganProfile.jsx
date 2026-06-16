@@ -17,7 +17,7 @@ const reportStatusStyles = {
   ditolak: "bg-red-50 text-red-700 ring-red-200",
 };
 
-const statusTabs = ["Semua", "Belum Diproses", "Sedang Diproses", "Selesai"];
+const statusTabs = ["Semua", "Belum Diproses", "Sedang Diproses", "Selesai", "Ditolak"];
 const DEFAULT_PROFILE_COVER_ID = "sigap-default";
 const DEFAULT_PROFILE_COVER = {
   id: DEFAULT_PROFILE_COVER_ID,
@@ -240,20 +240,14 @@ function ProfileReportCard({ report, onClick, onDelete }) {
           <p className="mt-2 line-clamp-3 text-sm font-normal leading-6 text-slate-600">{report.excerpt}</p>
         </div>
 
-        <div className="grid gap-3 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500 sm:grid-cols-[1fr_auto] sm:items-center">
-          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-5">
-            <span className="flex min-w-0 items-center gap-1.5">
-              <ReportMetaIcon name="location" />
-              <span className="truncate">{report.location}</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ReportMetaIcon name="time" />
-              Dilaporkan: {report.date}
-            </span>
-          </div>
-          <span className="inline-flex items-center gap-1.5 text-slate-500">
-            <ReportMetaIcon name="message" />
-            {report.comments} komentar
+        <div className="flex min-w-0 flex-col gap-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500 sm:flex-row sm:items-center sm:gap-5">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <ReportMetaIcon name="location" />
+            <span className="truncate">{report.location}</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <ReportMetaIcon name="time" />
+            Dilaporkan: {report.date}
           </span>
         </div>
       </div>
@@ -573,6 +567,9 @@ export function PelangganDashboard({
   const [deleteBusy, setDeleteBusy] = useState(false);
   const filteredReports = useMemo(() => {
     if (activeStatus === "Semua") return reports;
+    if (activeStatus === "Ditolak") {
+      return reports.filter((report) => report.rawStatus === "ditolak" || report.status === "Ditolak");
+    }
     if (activeStatus === "Belum Diproses") {
       return reports.filter((report) => report.rawStatus === "menunggu" || report.status === "Belum Diproses");
     }
@@ -590,6 +587,7 @@ export function PelangganDashboard({
   const reportCounts = useMemo(() => ({
     total: totalReports || reports.length,
     waiting: reports.filter((report) => report.rawStatus === "menunggu" || report.status === "Belum Diproses").length,
+    rejected: reports.filter((report) => report.rawStatus === "ditolak" || report.status === "Ditolak").length,
     progress: reports.filter((report) => report.rawStatus === "divalidasi" || report.rawStatus === "dalam_penanganan" || report.status === "Sedang Diproses" || report.status === "Dalam Proses").length,
     done: reports.filter((report) => report.rawStatus === "selesai" || report.status === "Selesai").length,
   }), [reports, totalReports]);
@@ -639,6 +637,7 @@ export function PelangganDashboard({
                 ["Belum Diproses", reportCounts.waiting],
                 ["Sedang Diproses", reportCounts.progress],
                 ["Selesai", reportCounts.done],
+                ["Ditolak", reportCounts.rejected],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-xl bg-sky-50/70 px-4 py-3 ring-1 ring-sky-100">
                   <p className="text-2xl font-extrabold text-[#0D6EFD]">{value}</p>
