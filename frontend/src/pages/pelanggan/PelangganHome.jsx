@@ -285,7 +285,10 @@
       onClick?.(report.id);
     };
 
+    const isInteractiveTarget = (target) => Boolean(target?.closest?.("button, a, input, textarea, select, label, [data-report-interactive='true']"));
+
     const handleCardKeyDown = (event) => {
+      if (isInteractiveTarget(event.target)) return;
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       openDetail();
@@ -374,6 +377,7 @@
 
     return (
       <article
+        id={`laporan-terbaru-${report.id}`}
         role="button"
         tabIndex={0}
         onClick={openDetail}
@@ -466,7 +470,12 @@
           ) : null}
 
           {showComments ? (
-            <div onClick={(event) => event.stopPropagation()} className="rounded-xl border border-sky-100 bg-sky-50/50 p-3">
+            <div
+              data-report-interactive="true"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+              className="rounded-xl border border-sky-100 bg-sky-50/50 p-3"
+            >
               {showComments ? (
                 <div className="mb-3 max-h-52 space-y-3 overflow-y-auto rounded-lg border border-sky-100 bg-white p-3">
                   {commentsStatus === "loading" ? (

@@ -138,9 +138,18 @@ export default function PelangganReportDetail({
   const [submittingComment, setSubmittingComment] = useState(false);
   const [likePulse, setLikePulse] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
+  const [statOverride, setStatOverride] = useState({ reportId: 0 });
 
   const reportId = Number(report?.id);
-  const isLiked = Boolean(report?.liked);
+  const baseStats = {
+    likes: report?.likes || 0,
+    comments: report?.comments || 0,
+    liked: Boolean(report?.liked),
+  };
+  const localStats = statOverride.reportId === reportId
+    ? { ...baseStats, ...statOverride }
+    : baseStats;
+  const isLiked = Boolean(localStats.liked);
   const statusClass = reportStatusStyles[report?.rawStatus] || "bg-slate-50 text-slate-700 ring-slate-200";
   const photoUrl = getPhotoUrl(report?.photo);
 
@@ -180,7 +189,15 @@ export default function PelangganReportDetail({
     setActionStatus({ type: "", message: "" });
     try {
       const response = await onLikeReport?.(report.id);
-      if (response?.data?.liked) {
+      const nextData = response?.data || {};
+      const nextLiked = nextData.liked ?? !isLiked;
+      setStatOverride((current) => ({
+        ...current,
+        reportId,
+        liked: nextLiked,
+        likes: nextData.like_count ?? Math.max(localStats.likes + (nextLiked ? 1 : -1), 0),
+      }));
+      if (nextLiked) {
         setLikePulse(true);
         window.setTimeout(() => setLikePulse(false), 420);
       }
@@ -213,6 +230,11 @@ export default function PelangganReportDetail({
       } else {
         await loadComments(report.id);
       }
+      setStatOverride((current) => ({
+        ...current,
+        reportId,
+        comments: response?.data?.comment_count ?? localStats.comments + 1,
+      }));
       setCommentText("");
       setShowComments(true);
       setActionStatus({ type: "success", message: COMMENT_SUCCESS_MESSAGE });
@@ -337,11 +359,11 @@ export default function PelangganReportDetail({
                 <span className={`inline-flex transition-transform duration-200 ${likePulse ? "scale-125" : ""}`}>
                   <DetailIcon name="heart" filled={isLiked} />
                 </span>
-                {report.likes} suka
+                {localStats.likes} suka
               </button>
               <button type="button" onClick={handleCommentToggle} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-slate-50 px-3 transition-colors hover:bg-sky-50 hover:text-[#0D6EFD] focus:outline-none focus:ring-2 focus:ring-sky-200">
                 <DetailIcon name="message" />
-                {report.comments} komentar
+                {localStats.comments} komentar
               </button>
               <button type="button" onClick={handleShare} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-slate-50 px-3 transition-colors hover:bg-sky-50 hover:text-[#0D6EFD] focus:outline-none focus:ring-2 focus:ring-sky-200">
                 <DetailIcon name="share" />
@@ -362,7 +384,7 @@ export default function PelangganReportDetail({
               <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <h2 className="text-base font-extrabold text-[#12304f]">Tulis Komentar</h2>
-                  <p className="text-xs font-semibold text-slate-500">{report.comments} komentar pada laporan ini</p>
+                  <p className="text-xs font-semibold text-slate-500">{localStats.comments} komentar pada laporan ini</p>
                 </div>
               </div>
 

@@ -35,9 +35,11 @@ const toDateInputValue = (value) => {
   return date.toISOString().slice(0, 10);
 };
 
-const scrollToLatestReports = () => {
+const scrollToLatestReports = (reportId) => {
   window.setTimeout(() => {
-    document.getElementById("laporan-terbaru")
+    const target = reportId ? document.getElementById(`laporan-terbaru-${reportId}`) : null;
+    const fallback = document.getElementById("laporan-terbaru");
+    (target || fallback)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 0);
 };
@@ -181,6 +183,7 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
   const [profileCoverState, setProfileCoverState] = useState({ owner: "", id: DEFAULT_PROFILE_COVER_ID });
   const didSyncInitialPathRef = useRef(false);
   const isApplyingPopStateRef = useRef(false);
+  const skipNextTopScrollRef = useRef(false);
   const pelanggan = usePelangganData({ authenticated });
   const pelangganProfile = pelanggan.profile;
   const profile = useMemo(() => ({
@@ -244,6 +247,10 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
 
   useEffect(() => {
     if (visiblePage === "home" && visibleActiveNav === "create-report") return;
+    if (skipNextTopScrollRef.current) {
+      skipNextTopScrollRef.current = false;
+      return;
+    }
     scrollToPageTop();
   }, [authenticated, visibleActiveNav, visiblePage]);
 
@@ -628,9 +635,10 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
         report={report}
         onBack={() => {
           const backPage = detailBackPage || "home";
+          if (backPage === "home") skipNextTopScrollRef.current = true;
           setPage(backPage);
           setActiveNav(backPage === "dashboard" ? "" : backPage);
-          if (backPage === "home") scrollToLatestReports();
+          if (backPage === "home") scrollToLatestReports(report?.id || selectedReportId);
         }}
         onLikeReport={pelanggan.likeReport}
         onCommentReport={pelanggan.commentReport}

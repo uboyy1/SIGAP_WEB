@@ -259,14 +259,20 @@ export default function usePelangganData({ authenticated = false } = {}) {
   const likeReport = async (id) => {
     const response = await togglePelangganLaporanLike(id);
     const nextCounts = response?.data || {};
+    const updateReport = (report) => (
+      report.id === id
+        ? { ...report, likes: nextCounts.like_count ?? report.likes, liked: nextCounts.liked ?? report.liked }
+        : report
+    );
 
     setPublicReportData((current) => ({
       ...current,
-      reports: current.reports.map((report) => (
-        report.id === id
-          ? { ...report, likes: nextCounts.like_count ?? report.likes, liked: nextCounts.liked ?? report.liked }
-          : report
-      )),
+      reports: current.reports.map(updateReport),
+    }));
+
+    setMyReportData((current) => ({
+      ...current,
+      reports: current.reports.map(updateReport),
     }));
 
     return response;
@@ -275,14 +281,20 @@ export default function usePelangganData({ authenticated = false } = {}) {
   const commentReport = async (id, komentar) => {
     const response = await addPelangganLaporanComment(id, komentar);
     const nextCounts = response?.data || {};
+    const updateReport = (report) => (
+      report.id === id
+        ? { ...report, comments: nextCounts.comment_count ?? report.comments }
+        : report
+    );
 
     setPublicReportData((current) => ({
       ...current,
-      reports: current.reports.map((report) => (
-        report.id === id
-          ? { ...report, comments: nextCounts.comment_count ?? report.comments }
-          : report
-      )),
+      reports: current.reports.map(updateReport),
+    }));
+
+    setMyReportData((current) => ({
+      ...current,
+      reports: current.reports.map(updateReport),
     }));
 
     return response;
