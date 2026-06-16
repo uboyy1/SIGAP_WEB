@@ -4,6 +4,7 @@ const { Notifikasi, User } = require('../../models');
 const { Op } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
+const { getUploadedFileUrl } = require('../../utils/uploadedFile');
 
 // Helper generate username unik
 const generateUniqueUsername = async (namaLengkap) => {
@@ -336,9 +337,6 @@ const uploadProfilePicture = async (req, res) => {
     const user = await User.findByPk(id);
     if (!user) {
       // Hapus file yang sudah terupload jika user tidak ditemukan
-      if (req.file.path) {
-        fs.unlinkSync(req.file.path);
-      }
       return res.status(404).json({ 
         success: false, 
         message: 'User tidak ditemukan' 
@@ -357,8 +355,8 @@ const uploadProfilePicture = async (req, res) => {
     }
     
     // Simpan path foto baru
-    const fotoUrl = `/uploads/profil/${req.file.filename}`;
-    await user.update({ foto_profil: fotoUrl });
+    const fotoUrl = getUploadedFileUrl(req.file);
+    await user.update({ foto_profil: fotoUrl, foto_base64: fotoUrl });
     
     console.log(`✅ Foto profil berhasil diupdate untuk user: ${user.nama_lengkap}`);
     
@@ -367,11 +365,13 @@ const uploadProfilePicture = async (req, res) => {
       message: 'Foto profil berhasil diupload',
       data: { 
         foto_profil: fotoUrl,
+        foto_base64: fotoUrl,
         user: {
           id: user.id,
           nama_lengkap: user.nama_lengkap,
           email: user.email,
-          foto_profil: fotoUrl
+          foto_profil: fotoUrl,
+          foto_base64: fotoUrl
         }
       }
     });

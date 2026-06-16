@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const { LaporanDarurat, User, Notifikasi } = require('../../models');
 const { saveActivityLog } = require('../aktivitasLogController');
 
-const API_URL = process.env.API_URL || 'http://localhost:5000';
+const API_URL = process.env.API_URL || process.env.BACKEND_URL || 'https://sigapweb-production.up.railway.app';
 
 function translateJenisKendala(jenis) {
   const map = {
@@ -32,7 +32,7 @@ const getFotoUrl = (fotoPath) => {
   if (fotoPath.startsWith('http') || fotoPath.startsWith('data:')) {
     return fotoPath;
   }
-  const cleanPath = fotoPath.startsWith('/') ? fotoPath : `/uploads/laporan/${fotoPath}`;
+  const cleanPath = fotoPath.startsWith('/') ? fotoPath : `/uploads/laporan-darurat/${fotoPath}`;
   return `${API_URL}${cleanPath}`;
 };
 

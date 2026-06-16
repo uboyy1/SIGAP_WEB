@@ -9,6 +9,7 @@ const {
 } = require('../../models');
 const { savePelangganActivity } = require('../aktivitasLogController');
 const { createNotificationWithCooldown } = require('../../utils/notificationHelper');
+const { getUploadedFileUrl } = require('../../utils/uploadedFile');
 
 const laporanInclude = [
   { model: KategoriGangguan, as: 'kategori', attributes: ['id', 'nama_kategori'] },
@@ -143,7 +144,7 @@ const createLaporan = async (req, res) => {
       deskripsi: req.body.deskripsi,
       lokasi: req.body.lokasi,
       nomor_telepon: req.body.nomor_telepon || req.user.no_telp,
-      foto: req.file ? `/uploads/laporan/${req.file.filename}` : null,
+      foto: req.file ? getUploadedFileUrl(req.file) : null,
       opsi_privasi: req.body.opsi_privasi || 'tidak_ada',
       sub_kategori: req.body.sub_kategori || null,
       tanggal_kejadian: req.body.tanggal_kejadian || null,
@@ -209,7 +210,7 @@ const updateLaporan = async (req, res) => {
         .map((key) => [key, req.body[key]])
     );
 
-    if (req.file) payload.foto = `/uploads/laporan/${req.file.filename}`;
+    if (req.file) payload.foto = getUploadedFileUrl(req.file);
 
     await laporan.update(payload);
     await savePelangganActivity(req, req.user, 'pelanggan_edit_laporan', `Pelanggan mengedit laporan "${laporan.judul}"`, { laporan_id: laporan.id });

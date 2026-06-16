@@ -2,8 +2,7 @@
 // backend/src/controllers/kepalaTeknisi/profileController.js
 const { Op } = require('sequelize');
 const { User } = require('../../models');
-const fs = require('fs');
-const sharp = require('sharp');
+const { getUploadedFileName, getUploadedFileUrl } = require('../../utils/uploadedFile');
 
 // Get profile
 const getProfile = async (req, res) => {
@@ -174,37 +173,18 @@ const uploadProfilePhoto = async (req, res) => {
 
     const user = await User.findByPk(req.user.id);
     if (!user) {
-      if (req.file.path) fs.unlinkSync(req.file.path);
       return res.status(404).json({
         success: false,
         message: 'User tidak ditemukan'
       });
     }
 
-    let imageBuffer = fs.readFileSync(req.file.path);
+    const fotoUrl = getUploadedFileUrl(req.file);
     
-    if (imageBuffer.length > 500 * 1024) {
-      try {
-        imageBuffer = await sharp(imageBuffer)
-          .resize(500, 500, { fit: 'inside' })
-          .jpeg({ quality: 70 })
-          .toBuffer();
-        console.log(`📸 Image compressed from ${req.file.size} to ${imageBuffer.length} bytes`);
-      } catch (compressError) {
-        console.warn('Compression failed, using original:', compressError.message);
-      }
-    }
-    
-    const base64String = imageBuffer.toString('base64');
-    const mimeType = req.file.mimetype || 'image/jpeg';
-    const fotoBase64 = `data:${mimeType};base64,${base64String}`;
-
-    if (req.file.path) {
-      fs.unlinkSync(req.file.path);
-    }
+    const fotoBase64 = fotoUrl;
 
     await user.update({ 
-      foto_profil: req.file.filename,
+      foto_profil: fotoUrl || getUploadedFileName(req.file),
       foto_base64: fotoBase64 
     });
     await user.reload();
@@ -215,8 +195,8 @@ const uploadProfilePhoto = async (req, res) => {
       success: true,
       message: 'Foto profil berhasil diupload',
       data: {
-        foto_profil: req.file.filename,
-        foto_base64: fotoBase64,
+        foto_profil: user.foto_profil,
+        foto_base64: user.foto_base64,
         user: {
           id: user.id,
           nama_lengkap: user.nama_lengkap,
@@ -232,9 +212,6 @@ const uploadProfilePhoto = async (req, res) => {
     });
   } catch (error) {
     console.error('Upload profile photo error:', error);
-    if (req.file && req.file.path) {
-      try { fs.unlinkSync(req.file.path); } catch (e) {}
-    }
     return res.status(500).json({
       success: false,
       message: error.message || 'Terjadi kesalahan server'

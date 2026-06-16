@@ -1,5 +1,4 @@
 // API Pelanggan - SIGAP: Controller autentikasi dan profil pelanggan.
-const fs = require('fs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
@@ -16,6 +15,7 @@ const {
 const { savePelangganActivity } = require('../aktivitasLogController');
 const { createNotificationWithCooldown } = require('../../utils/notificationHelper');
 const { sendVerificationEmail } = require('../../utils/emailService');
+const { getUploadedFileName, getUploadedFileUrl } = require('../../utils/uploadedFile');
 const {
   DEFAULT_PROFILE_COVER_ID,
   PROFILE_COVER_OPTIONS,
@@ -354,14 +354,12 @@ const uploadPhoto = async (req, res) => {
       return res.status(400).json({ success: false, message: 'File foto belum dipilih' });
     }
 
-    const fileBuffer = fs.readFileSync(req.file.path);
-    const fotoBase64 = `data:${req.file.mimetype};base64,${fileBuffer.toString('base64')}`;
-    fs.unlink(req.file.path, () => {});
+    const fotoUrl = getUploadedFileUrl(req.file);
 
     const user = await User.findByPk(req.user.id);
     await user.update({
-      foto_profil: req.file.originalname,
-      foto_base64: fotoBase64
+      foto_profil: fotoUrl || getUploadedFileName(req.file),
+      foto_base64: fotoUrl
     });
 
     await savePelangganActivity(req, user, 'pelanggan_upload_photo', 'Pelanggan memperbarui foto profil');

@@ -3,9 +3,9 @@
 const jwt = require('jsonwebtoken');
 const { User, PasswordResetRequest, Notifikasi } = require('../../models');
 const { Op } = require('sequelize');
-const fs = require('fs');
 const { saveActivityLog } = require('../aktivitasLogController');
 const logger = require('../../utils/logger');
+const { getUploadedFileName, getUploadedFileUrl } = require('../../utils/uploadedFile');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -563,25 +563,17 @@ const uploadAdminPhoto = async (req, res) => {
 
     const user = await User.findByPk(req.user.id);
     if (!user) {
-      if (req.file.path) fs.unlinkSync(req.file.path);
       return res.status(404).json({
         success: false,
         message: 'User tidak ditemukan'
       });
     }
 
-    const fileBuffer = fs.readFileSync(req.file.path);
-    const base64String = fileBuffer.toString('base64');
-    const mimeType = req.file.mimetype;
-    const fotoBase64 = `data:${mimeType};base64,${base64String}`;
-
-    if (req.file.path) {
-      fs.unlinkSync(req.file.path);
-    }
+    const fotoUrl = getUploadedFileUrl(req.file);
 
     await user.update({
-      foto_profil: req.file.filename,
-      foto_base64: fotoBase64
+      foto_profil: fotoUrl || getUploadedFileName(req.file),
+      foto_base64: fotoUrl
     });
     await user.reload();
 
@@ -591,8 +583,8 @@ const uploadAdminPhoto = async (req, res) => {
       success: true,
       message: 'Foto profil berhasil diupload',
       data: {
-        foto_profil: req.file.filename,
-        foto_base64: fotoBase64,
+        foto_profil: user.foto_profil,
+        foto_base64: user.foto_base64,
         user: {
           id: user.id,
           nama_lengkap: user.nama_lengkap,
@@ -608,9 +600,6 @@ const uploadAdminPhoto = async (req, res) => {
     });
   } catch (error) {
     logger.error('Upload admin photo error', { error, user_id: req.user?.id });
-    if (req.file && req.file.path) {
-      try { fs.unlinkSync(req.file.path); } catch (e) {}
-    }
     return res.status(500).json({
       success: false,
       message: error.message || 'Terjadi kesalahan server'
