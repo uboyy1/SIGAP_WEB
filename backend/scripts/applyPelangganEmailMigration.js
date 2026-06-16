@@ -151,6 +151,29 @@ const ensurePelangganTables = async (connection) => {
   console.log('table ready notification_states');
 };
 
+const ensureProfileCoverColumn = async (connection) => {
+  if (!(await columnExists(connection, 'users', 'profile_cover_id'))) {
+    await connection.query("ALTER TABLE users ADD COLUMN profile_cover_id VARCHAR(64) NOT NULL DEFAULT 'sigap-default'");
+    console.log('added column profile_cover_id');
+  } else {
+    console.log('column exists profile_cover_id');
+  }
+
+  await connection.query(`
+    UPDATE users
+    SET profile_cover_id = 'sigap-default'
+    WHERE profile_cover_id IS NULL OR profile_cover_id = ''
+  `);
+  console.log('profile cover defaults normalized');
+
+  await createIndexIfMissing(
+    connection,
+    'users',
+    'idx_users_profile_cover_id',
+    'CREATE INDEX idx_users_profile_cover_id ON users (profile_cover_id)'
+  );
+};
+
 const ensureIndexes = async (connection) => {
   await createIndexIfMissing(
     connection,
@@ -222,6 +245,7 @@ const main = async () => {
   try {
     await ensureEmailVerificationColumns(connection);
     await ensurePelangganTables(connection);
+    await ensureProfileCoverColumn(connection);
     await ensureIndexes(connection);
     await ensureAktivitasEnum(connection);
     console.log('pelanggan database compatibility migration completed');

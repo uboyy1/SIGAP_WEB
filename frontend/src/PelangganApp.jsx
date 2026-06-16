@@ -1,5 +1,5 @@
 // Aplikasi Pelanggan - SIGAP
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { useAuth } from "./context/AuthContext";
 import { PelangganForgotPassword } from "./components/pelanggan/PelangganAuth";
@@ -12,8 +12,21 @@ import PelangganRegister from "./pages/pelanggan/PelangganRegister";
 import PelangganReportGuide from "./pages/pelanggan/PelangganReportGuide";
 import { PelangganAbout, PelangganContact, PelangganTerms } from "./pages/pelanggan/PelangganInfoPages";
 import PelangganReportDetail from "./pages/pelanggan/PelangganReportDetail";
-import { PelangganDashboard, PelangganEditProfile, PelangganNotifications, PelangganPassword } from "./pages/pelanggan/PelangganProfile";
-import { deletePelangganPhoto, updatePelangganProfile, uploadPelangganPhoto } from "./services/api";
+import {
+  PelangganDashboard,
+  PelangganEditProfile,
+  PelangganNotifications,
+  PelangganPassword,
+} from "./pages/pelanggan/PelangganProfile";
+import {
+  deletePelangganPhoto,
+  getPelangganProfileCovers,
+  updatePelangganProfile,
+  updatePelangganProfileCover,
+  uploadPelangganPhoto,
+} from "./services/api";
+
+const DEFAULT_PROFILE_COVER_ID = "sigap-default";
 
 const toDateInputValue = (value) => {
   if (!value) return "";
@@ -164,23 +177,45 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const [online, setOnline] = useState(() => navigator.onLine);
+  const [coverOptions, setCoverOptions] = useState([]);
+  const [profileCoverState, setProfileCoverState] = useState({ owner: "", id: DEFAULT_PROFILE_COVER_ID });
   const didSyncInitialPathRef = useRef(false);
   const isApplyingPopStateRef = useRef(false);
   const pelanggan = usePelangganData({ authenticated });
-  const profile = {
-    ...pelanggan.profile,
-    id: user?.id || pelanggan.profile.id || null,
-    nama: user?.nama_lengkap || pelanggan.profile.nama || "",
-    username: user?.username || pelanggan.profile.username || "",
-    email: user?.email || pelanggan.profile.email || "",
-    noLangganan: user?.no_langganan || pelanggan.profile.noLangganan || "",
-    telepon: user?.no_telp || pelanggan.profile.telepon || "",
-    alamat: user?.alamat || pelanggan.profile.alamat || "",
-    tanggalLahir: toDateInputValue(user?.tanggal_lahir) || pelanggan.profile.tanggalLahir || "",
-    jenisKelamin: user?.jenis_kelamin || pelanggan.profile.jenisKelamin || "",
-    bio: user?.bio || pelanggan.profile.bio || "",
-    foto: user?.foto_base64 || pelanggan.profile.foto || "",
-  };
+  const pelangganProfile = pelanggan.profile;
+  const profile = useMemo(() => ({
+    ...pelangganProfile,
+    id: user?.id || pelangganProfile.id || null,
+    nama: user?.nama_lengkap || pelangganProfile.nama || "",
+    username: user?.username || pelangganProfile.username || "",
+    email: user?.email || pelangganProfile.email || "",
+    noLangganan: user?.no_langganan || pelangganProfile.noLangganan || "",
+    telepon: user?.no_telp || pelangganProfile.telepon || "",
+    alamat: user?.alamat || pelangganProfile.alamat || "",
+    tanggalLahir: toDateInputValue(user?.tanggal_lahir) || pelangganProfile.tanggalLahir || "",
+    jenisKelamin: user?.jenis_kelamin || pelangganProfile.jenisKelamin || "",
+    bio: user?.bio || pelangganProfile.bio || "",
+    foto: user?.foto_base64 || pelangganProfile.foto || "",
+    profileCoverId: user?.profile_cover_id || pelangganProfile.profileCoverId || DEFAULT_PROFILE_COVER_ID,
+  }), [
+    pelangganProfile,
+    user?.alamat,
+    user?.bio,
+    user?.email,
+    user?.foto_base64,
+    user?.id,
+    user?.jenis_kelamin,
+    user?.nama_lengkap,
+    user?.no_langganan,
+    user?.no_telp,
+    user?.profile_cover_id,
+    user?.tanggal_lahir,
+    user?.username,
+  ]);
+  const profileOwnerKey = `${profile.id || ""}:${profile.email || ""}:${profile.username || ""}`;
+  const profileCoverId = profileCoverState.owner === profileOwnerKey
+    ? profileCoverState.id
+    : profile.profileCoverId || DEFAULT_PROFILE_COVER_ID;
   const isBlockedPelangganPage = !authenticated && (protectedPelangganPages.has(page) || activeNav === "create-report");
   const visiblePage = isBlockedPelangganPage ? "login" : page;
   const visibleActiveNav = isBlockedPelangganPage ? "" : activeNav;
@@ -189,10 +224,61 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
     setToast({ type, message });
   };
 
+  const handleProfileCoverSave = async (nextCoverId) => {
+    try {
+      const response = await updatePelangganProfileCover(nextCoverId);
+      const activeCoverId = response?.data?.active_cover_id || nextCoverId;
+      setProfileCoverState({ owner: profileOwnerKey, id: activeCoverId });
+      await refreshUser();
+      pelanggan.setProfile({
+        ...pelanggan.profile,
+        profileCoverId: activeCoverId,
+      });
+      showToast("success", "Cover profil berhasil diperbarui.");
+      return activeCoverId;
+    } catch (error) {
+      showToast("error", error.message || "Gagal menyimpan cover profil.");
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (visiblePage === "home" && visibleActiveNav === "create-report") return;
     scrollToPageTop();
   }, [authenticated, visibleActiveNav, visiblePage]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadProfileCovers = async () => {
+      if (!authenticated) {
+        setCoverOptions([]);
+        setProfileCoverState({ owner: "", id: DEFAULT_PROFILE_COVER_ID });
+        return;
+      }
+
+      try {
+        const response = await getPelangganProfileCovers();
+        if (ignore) return;
+
+        const covers = response?.data?.covers || [];
+        const activeCoverId = response?.data?.active_cover_id || profile.profileCoverId || DEFAULT_PROFILE_COVER_ID;
+        setCoverOptions(covers);
+        setProfileCoverState({ owner: profileOwnerKey, id: activeCoverId });
+      } catch (error) {
+        if (!ignore) {
+          console.error("Gagal memuat cover profil:", error);
+        }
+      }
+    };
+
+    loadProfileCovers();
+
+    return () => {
+      ignore = true;
+    };
+  }, [authenticated, profile.profileCoverId, profileOwnerKey]);
+
 
   useEffect(() => {
     if (!toast.message) return undefined;
@@ -351,19 +437,24 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
   };
 
   const handleProfileSave = async (draft, photoFile = null, options = {}) => {
-    const payload = {
-      nama_lengkap: draft.nama,
-      username: draft.username,
-      email: draft.email,
-      no_telp: draft.telepon,
-      tanggal_lahir: draft.tanggalLahir,
-      jenis_kelamin: draft.jenisKelamin,
-      alamat: draft.alamat,
-      bio: draft.bio,
-    };
+    const photoOnly = Boolean(options.photoOnly);
+    let nextUser = null;
 
-    const response = await updatePelangganProfile(payload);
-    let nextUser = response?.data || await refreshUser();
+    if (!photoOnly) {
+      const payload = {
+        nama_lengkap: draft.nama,
+        username: draft.username,
+        email: draft.email,
+        no_telp: draft.telepon,
+        tanggal_lahir: draft.tanggalLahir,
+        jenis_kelamin: draft.jenisKelamin,
+        alamat: draft.alamat,
+        bio: draft.bio,
+      };
+
+      const response = await updatePelangganProfile(payload);
+      nextUser = response?.data || await refreshUser();
+    }
 
     if (options.deletePhoto) {
       const deleteResponse = await deletePelangganPhoto();
@@ -378,7 +469,7 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
     const refreshedUser = await refreshUser();
     nextUser = refreshedUser || nextUser;
 
-    pelanggan.setProfile({
+    const nextProfile = {
       nama: nextUser?.nama_lengkap || draft.nama,
       username: nextUser?.username || draft.username,
       email: nextUser?.email || draft.email,
@@ -389,15 +480,25 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
       alamat: nextUser?.alamat || draft.alamat,
       bio: nextUser?.bio || draft.bio,
       foto: nextUser && Object.prototype.hasOwnProperty.call(nextUser, "foto_base64") ? nextUser.foto_base64 || "" : draft.foto,
-    });
+      profileCoverId: nextUser?.profile_cover_id || draft.profileCoverId || profileCoverId,
+    };
+
+    pelanggan.setProfile(nextProfile);
     await Promise.all([
       pelanggan.refreshMyReports({ silent: true }),
       pelanggan.refreshPublicReports({ silent: true }),
     ]);
+
+    if (photoOnly) {
+      showToast("success", "Foto profil berhasil diperbarui.");
+      return nextProfile;
+    }
+
     setPage("dashboard");
     setActiveNav("dashboard");
     showToast("success", "Profil berhasil diperbarui.");
     scrollToPageTop();
+    return nextProfile;
   };
 
   const requirePelangganLogin = () => {
@@ -496,6 +597,8 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
     dashboard: (
       <PelangganDashboard
         profile={profile}
+        coverId={profileCoverId}
+        coverOptions={coverOptions}
         reports={pelanggan.myReports}
         totalReports={pelanggan.totalMyReports}
         loading={pelanggan.myReportsLoading}
@@ -512,9 +615,9 @@ export default function PelangganApp({ initialAuthenticated = false, onBackToInt
         }}
       />
     ),
-    "edit-profile": <PelangganEditProfile key={profile.id || profile.email || "pelanggan-profile"} profile={profile} onSave={handleProfileSave} onNavigate={navigate} onToast={showToast} />,
-    notifications: <PelangganNotifications profile={profile} onNavigate={navigate} />,
-    password: <PelangganPassword profile={profile} onNavigate={navigate} />,
+    "edit-profile": <PelangganEditProfile key={profile.id || profile.email || "pelanggan-profile"} profile={profile} coverId={profileCoverId} coverOptions={coverOptions} onCoverSave={handleProfileCoverSave} onSave={handleProfileSave} onNavigate={navigate} onToast={showToast} />,
+    notifications: <PelangganNotifications profile={profile} coverId={profileCoverId} coverOptions={coverOptions} onNavigate={navigate} />,
+    password: <PelangganPassword profile={profile} coverId={profileCoverId} coverOptions={coverOptions} onNavigate={navigate} />,
     "report-guide": <PelangganReportGuide onNavigate={navigate} />,
     about: <PelangganAbout />,
     terms: <PelangganTerms onNavigate={navigate} />,

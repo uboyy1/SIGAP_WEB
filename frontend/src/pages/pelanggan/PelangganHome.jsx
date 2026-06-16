@@ -1054,13 +1054,17 @@
                           }}
                           className="mt-1 shrink-0 accent-[#0D6EFD] sm:mt-0"
                         />
-                        <span className="min-w-0 flex-1 break-words">{item.nama_kategori}</span>
-                        <span className="group relative mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[11px] font-extrabold text-[#0D6EFD] ring-1 ring-sky-100 sm:mt-0" tabIndex={0} aria-label={`Informasi ${item.nama_kategori}`}>
-                          ?
-                          <span className="pointer-events-none absolute right-0 top-7 z-20 hidden w-[min(18rem,calc(100vw-4rem))] rounded-lg bg-[#12304f] px-3 py-2 text-left text-xs font-semibold leading-5 text-white shadow-xl group-hover:block group-focus:block sm:left-1/2 sm:right-auto sm:w-72 sm:-translate-x-1/2">
-                            <span className="block font-extrabold">{item.nama_kategori}</span>
-                            <span className="mt-1 block font-semibold text-white/85">{categoryInfo.text}</span>
-                            <span className="mt-2 block font-normal text-white/75">{categoryInfo.example}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="inline-flex max-w-full flex-wrap items-center gap-1.5">
+                            <span className="min-w-0 break-words">{item.nama_kategori}</span>
+                            <span className="group relative mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[11px] font-extrabold text-[#0D6EFD] ring-1 ring-sky-100 sm:mt-0" tabIndex={0} aria-label={`Informasi ${item.nama_kategori}`}>
+                              ?
+                              <span className="pointer-events-none absolute right-0 top-7 z-20 hidden w-[min(18rem,calc(100vw-4rem))] rounded-lg bg-[#12304f] px-3 py-2 text-left text-xs font-semibold leading-5 text-white shadow-xl group-hover:block group-focus:block sm:left-1/2 sm:right-auto sm:w-72 sm:-translate-x-1/2">
+                                <span className="block font-extrabold">{item.nama_kategori}</span>
+                                <span className="mt-1 block font-semibold text-white/85">{categoryInfo.text}</span>
+                                <span className="mt-2 block font-normal text-white/75">{categoryInfo.example}</span>
+                              </span>
+                            </span>
                           </span>
                         </span>
                       </label>

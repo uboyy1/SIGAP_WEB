@@ -18,6 +18,7 @@ const {
   registerValidator,
   loginValidator,
   updateProfileValidator,
+  updateProfileCoverValidator,
   updatePasswordValidator,
   forgotPasswordValidator,
   resetApprovedPasswordValidator
@@ -28,6 +29,8 @@ const {
   logout,
   me,
   updateProfile,
+  getProfileCovers,
+  updateProfileCover,
   uploadPhoto,
   deletePhoto,
   updatePassword,
@@ -51,7 +54,9 @@ router.use(protectPelanggan, pelangganOnly);
 router.get('/csrf-token', issuePelangganCsrfToken);
 router.post('/logout', verifyPelangganCsrfToken, logout);
 router.get('/me', me);
+router.get('/profile-covers', getProfileCovers);
 router.put('/profile', verifyPelangganCsrfToken, updateProfileValidator, validateRequest, updateProfile);
+router.put('/profile/cover', verifyPelangganCsrfToken, updateProfileCoverValidator, validateRequest, updateProfileCover);
 router.post('/upload-photo', verifyPelangganCsrfToken, upload.single('foto_profil'), upload.compressUploadedImage, uploadPhoto);
 router.delete('/profile/photo', verifyPelangganCsrfToken, deletePhoto);
 router.put('/password', verifyPelangganCsrfToken, updatePasswordValidator, validateRequest, updatePassword);

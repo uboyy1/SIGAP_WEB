@@ -7,8 +7,9 @@
     "node": "22.x"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node scripts/applyPelangganEmailMigration.js && node server.js",
+    "dev": "nodemon server.js",
+    "migrate:profile-cover": "node scripts/applyProfileCoverMigration.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

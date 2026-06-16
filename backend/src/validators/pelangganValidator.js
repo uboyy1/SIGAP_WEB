@@ -1,5 +1,6 @@
 // API Pelanggan - SIGAP: Validator request pelanggan.
 const { body } = require('express-validator');
+const { isValidProfileCoverId } = require('../utils/profileCoverOptions');
 
 const forbiddenUsernameWords = [
   'anjing',
@@ -140,6 +141,19 @@ const updatePasswordValidator = [
     .matches(/[0-9]/).withMessage('Password baru harus memuat angka')
 ];
 
+const updateProfileCoverValidator = [
+  body('profile_cover_id')
+    .trim()
+    .notEmpty().withMessage('Cover profil harus dipilih')
+    .isLength({ max: 64 }).withMessage('Cover profil tidak valid')
+    .custom((value) => {
+      if (!isValidProfileCoverId(value)) {
+        throw new Error('Cover profil tidak tersedia');
+      }
+      return true;
+    })
+];
+
 const forgotPasswordValidator = [
   body('email').optional({ checkFalsy: true }).trim().isEmail().withMessage('Format email tidak valid').normalizeEmail(),
   body('identifier').optional({ checkFalsy: true }).trim()
@@ -162,6 +176,7 @@ module.exports = {
   updateLaporanValidator,
   commentValidator,
   updatePasswordValidator,
+  updateProfileCoverValidator,
   forgotPasswordValidator,
   resetApprovedPasswordValidator
 };

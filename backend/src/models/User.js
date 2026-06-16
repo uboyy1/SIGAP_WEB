@@ -54,6 +54,11 @@ const User = sequelize.define('User', {
   bio: {
     type: DataTypes.TEXT
   },
+  profile_cover_id: {
+    type: DataTypes.STRING(64),
+    allowNull: false,
+    defaultValue: 'sigap-default'
+  },
   role: {
     type: DataTypes.ENUM('pelanggan', 'teknisi', 'kepala_teknisi', 'admin'),
     defaultValue: 'pelanggan'

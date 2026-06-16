@@ -18,6 +18,23 @@ const reportStatusStyles = {
 };
 
 const statusTabs = ["Semua", "Belum Diproses", "Sedang Diproses", "Selesai"];
+const DEFAULT_PROFILE_COVER_ID = "sigap-default";
+const DEFAULT_PROFILE_COVER = {
+  id: DEFAULT_PROFILE_COVER_ID,
+  label: "Biru SIGAP Default",
+  accent: "#0D6EFD",
+  background: "linear-gradient(135deg,#0D6EFD 0%,#0B65EE 100%)",
+  pattern: "linear-gradient(118deg,transparent 0 54%,rgba(255,255,255,0.18) 54% 54.6%,transparent 54.6% 68%,rgba(255,255,255,0.12) 68% 68.5%,transparent 68.5%)",
+  patternSize: "720px 720px",
+};
+
+function getProfileCoverOption(coverOptions = [], id = DEFAULT_PROFILE_COVER_ID) {
+  return coverOptions.find((cover) => cover.id === id) || DEFAULT_PROFILE_COVER;
+}
+
+function getCoverOptions(coverOptions = []) {
+  return coverOptions.length > 0 ? coverOptions : [DEFAULT_PROFILE_COVER];
+}
 
 function getPhotoSrc(value = "") {
   if (!value) return "";
@@ -36,7 +53,14 @@ function getProfileInitials(value = "") {
   return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase();
 }
 
-function ProfileAvatar({ profile, previewSrc = "", className = "h-24 w-24" }) {
+function getCoverPatternStyle(cover) {
+  return {
+    backgroundImage: cover.pattern,
+    backgroundSize: cover.patternSize,
+  };
+}
+
+function ProfileAvatar({ profile, previewSrc = "", className = "h-24 w-24", accentColor = "#0D6EFD" }) {
   const displayName = getProfileDisplayName(profile);
   const imageSrc = previewSrc || getPhotoSrc(profile?.foto);
 
@@ -51,7 +75,7 @@ function ProfileAvatar({ profile, previewSrc = "", className = "h-24 w-24" }) {
   }
 
   return (
-    <span className={`${className} flex shrink-0 items-center justify-center rounded-full border-4 border-white bg-white text-2xl font-extrabold text-[#0D6EFD] shadow-xl ring-1 ring-white/70`}>
+    <span className={`${className} flex shrink-0 items-center justify-center rounded-full border-4 border-white bg-white text-2xl font-extrabold shadow-xl ring-1 ring-white/70`} style={{ color: accentColor }}>
       {getProfileInitials(displayName)}
     </span>
   );
@@ -82,6 +106,26 @@ function SaveIcon() {
       <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
       <path d="M17 21v-8H7v8" />
       <path d="M7 3v5h8" />
+    </svg>
+  );
+}
+
+function PaletteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" className="h-4 w-4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="13.5" cy="6.5" r="0.7" />
+      <circle cx="17.5" cy="10.5" r="0.7" />
+      <circle cx="8.5" cy="9.5" r="0.7" />
+      <circle cx="10.5" cy="14.5" r="0.7" />
+      <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 1.7-4.33 1.5 1.5 0 0 1 1.04-2.6H17A4 4 0 0 0 21 10c0-3.87-4.03-7-9-7Z" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="h-4 w-4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m20 6-11 11-5-5" />
     </svg>
   );
 }
@@ -221,22 +265,38 @@ function ProfileHero({
   profile,
   actionLabel = "LIHAT PROFIL",
   onAction,
+  secondaryActionLabel = "",
+  onSecondaryAction,
+  secondaryActionIcon = null,
   hideIdentity = false,
   avatarPreviewSrc = "",
   avatarControls = null,
   avatarFooter = null,
+  coverId = "",
+  coverOptions = [],
 }) {
   const displayName = getProfileDisplayName(profile);
   const subscriptionNumber = profile.noLangganan ? `No langganan: ${profile.noLangganan}` : "No langganan belum tersedia";
+  const activeCover = getProfileCoverOption(coverOptions, coverId || profile?.profileCoverId || DEFAULT_PROFILE_COVER_ID);
+  const heroTextClass = activeCover.isLight ? "text-[#12304f]" : "text-white";
+  const heroSubTextClass = activeCover.isLight ? "text-[#164b9d]" : "text-sky-100";
+  const primaryButtonClass = activeCover.isLight
+    ? "border-[#12304f]/20 bg-white/75 text-[#12304f] hover:bg-[#12304f] hover:text-white"
+    : "border-white/80 bg-white/5 text-white hover:bg-white hover:text-[#164b9d]";
+  const secondaryButtonClass = activeCover.isLight
+    ? "border-transparent bg-[#0D6EFD] text-white shadow-[0_10px_24px_rgba(13,110,253,0.2)] hover:bg-[#075bd8]"
+    : "border-white/75 bg-white/15 text-white hover:bg-white hover:text-[#164b9d]";
+  const shadeClass = activeCover.isLight ? "from-white/35 via-white/10 to-transparent" : "from-slate-950/28 via-slate-950/8 to-transparent";
 
   return (
-    <section className="relative overflow-hidden bg-[#0D6EFD] text-white shadow-sm">
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.16)_0,rgba(255,255,255,0.05)_38%,transparent_39%),linear-gradient(135deg,transparent_0%,rgba(3,37,106,0.18)_51%,transparent_52%)] bg-[size:420px_420px,220px_220px]" />
+    <section className={`relative overflow-hidden shadow-sm ${heroTextClass}`} style={{ background: activeCover.background }}>
+      <div className="absolute inset-0" style={getCoverPatternStyle(activeCover)} />
+      <div className={`absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t ${shadeClass}`} />
       <div className="relative mx-auto flex min-h-[250px] max-w-6xl flex-col justify-end gap-6 px-4 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div className="flex min-w-0 flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:text-left">
           <div className="flex w-fit shrink-0 flex-col items-center gap-2">
             <div className={`relative w-fit ${avatarControls ? "pb-3" : ""}`}>
-              <ProfileAvatar profile={profile} previewSrc={avatarPreviewSrc} className="h-24 w-24 sm:h-28 sm:w-28" />
+              <ProfileAvatar profile={profile} previewSrc={avatarPreviewSrc} className="h-24 w-24 sm:h-28 sm:w-28" accentColor={activeCover.accent} />
               {avatarControls ? (
                 <div className="absolute bottom-0 right-0 flex items-center gap-2">
                   {avatarControls}
@@ -248,18 +308,141 @@ function ProfileHero({
           {!hideIdentity ? (
             <div className="min-w-0">
               <h1 className="break-words text-2xl font-extrabold sm:truncate sm:text-3xl">{displayName}</h1>
-              <p className="mt-2 break-words text-sm font-extrabold text-sky-100">{subscriptionNumber}</p>
+              <p className={`mt-2 break-words text-sm font-extrabold ${heroSubTextClass}`}>{subscriptionNumber}</p>
             </div>
           ) : null}
         </div>
-        <button
-          onClick={onAction}
-          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-lg border border-white/80 px-6 text-xs font-extrabold tracking-wide text-white transition-colors hover:bg-white hover:text-[#164b9d] sm:w-auto"
-        >
-          {actionLabel}
-        </button>
+        <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:w-auto sm:grid-cols-[auto_auto]">
+          {secondaryActionLabel ? (
+            <button
+              type="button"
+              onClick={onSecondaryAction}
+              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border px-5 text-xs font-extrabold tracking-wide backdrop-blur transition-colors sm:w-auto ${secondaryButtonClass}`}
+            >
+              {secondaryActionIcon}
+              {secondaryActionLabel}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={onAction}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg border px-6 text-xs font-extrabold tracking-wide backdrop-blur transition-colors sm:w-auto ${primaryButtonClass}`}
+          >
+            {actionLabel}
+          </button>
+        </div>
       </div>
     </section>
+  );
+}
+
+function CoverOptionButton({ cover, active, disabled = false, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(cover.id)}
+      disabled={disabled}
+      className={`overflow-hidden rounded-xl border bg-white text-left transition-all hover:-translate-y-0.5 hover:border-sky-300 hover:shadow-[0_14px_28px_rgba(13,110,253,0.12)] ${
+        active ? "border-[#0D6EFD] ring-4 ring-sky-100" : "border-slate-200"
+      } disabled:cursor-not-allowed disabled:opacity-70`}
+    >
+      <span className="relative block h-24 overflow-hidden" style={{ background: cover.background }}>
+        <span className="absolute inset-0" style={getCoverPatternStyle(cover)} />
+        <span className={`absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t ${cover.isLight ? "from-white/38 to-transparent" : "from-slate-950/28 to-transparent"}`} />
+      </span>
+      <span className="flex min-h-14 items-center justify-between gap-3 px-3 py-2.5">
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="h-3 w-3 shrink-0 rounded-full ring-2 ring-sky-50" style={{ backgroundColor: cover.accent }} />
+          <span className="truncate text-xs font-extrabold text-[#12304f]">{cover.label}</span>
+        </span>
+        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${
+          active ? "border-[#0D6EFD] bg-[#0D6EFD] text-white" : "border-slate-200 bg-slate-50 text-transparent"
+        }`}>
+          <CheckIcon />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function ProfileCoverPicker({ open, selectedId, coverOptions = [], saving = false, onSelect, onSave, onCancel, onReset }) {
+  if (!open) return null;
+
+  const options = getCoverOptions(coverOptions);
+  const selectedCover = getProfileCoverOption(options, selectedId);
+  const previewTextClass = selectedCover.isLight ? "text-[#12304f]" : "text-white";
+  const previewSubTextClass = selectedCover.isLight ? "text-[#164b9d]" : "text-white/80";
+
+  return (
+    <div className="fixed inset-0 z-[85] flex items-end justify-center bg-slate-950/45 px-3 pb-0 pt-8 backdrop-blur-sm sm:items-center sm:p-4">
+      <section className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-2xl bg-white p-4 shadow-2xl shadow-slate-950/25 sm:rounded-2xl sm:p-6">
+        <div className="flex flex-col gap-3 border-b border-sky-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-xl font-extrabold text-[#12304f]">Edit Cover Profil</h2>
+            <p className="mt-1 text-sm font-semibold text-slate-500">{selectedCover.label}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={saving}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-extrabold text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+            aria-label="Tutup pilihan cover"
+          >
+            x
+          </button>
+        </div>
+
+        <div className="mt-5 overflow-hidden rounded-xl border border-sky-100 shadow-[0_16px_36px_rgba(15,58,125,0.10)]">
+          <div className="relative min-h-[128px] px-5 py-6 sm:min-h-[150px] sm:px-7" style={{ background: selectedCover.background }}>
+            <div className="absolute inset-0" style={getCoverPatternStyle(selectedCover)} />
+            <div className={`relative flex h-full min-h-[82px] flex-col justify-end ${previewTextClass}`}>
+              <p className="text-sm font-extrabold uppercase tracking-wide">Preview Cover</p>
+              <p className="mt-1 text-2xl font-extrabold">SIGAP Pelanggan</p>
+              <p className={`mt-1 text-sm font-semibold ${previewSubTextClass}`}>Cover profil aktif: {selectedCover.label}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {options.map((cover) => (
+            <CoverOptionButton
+              key={cover.id}
+              cover={cover}
+              active={cover.id === selectedCover.id}
+              disabled={saving}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
+
+        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-sky-100 pt-4 sm:flex-row sm:items-center sm:justify-end">
+          <button
+            type="button"
+            onClick={onReset}
+            disabled={saving}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-sky-100 bg-sky-50 px-4 text-sm font-extrabold text-[#0D6EFD] transition-colors hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-60 sm:mr-auto sm:w-auto"
+          >
+            Reset ke Default
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={saving}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-5 text-sm font-extrabold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#0D6EFD] px-6 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(13,110,253,0.24)] transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
+            {saving ? "Menyimpan..." : "Simpan Cover"}
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -373,6 +556,8 @@ function ConfirmPanel({ title, message, loading, onCancel, onConfirm }) {
 
 export function PelangganDashboard({
   profile,
+  coverId = DEFAULT_PROFILE_COVER_ID,
+  coverOptions = [],
   reports = [],
   totalReports = 0,
   loading = false,
@@ -427,7 +612,7 @@ export function PelangganDashboard({
 
   return (
     <>
-      <ProfileHero profile={profile} actionLabel="UBAH" onAction={() => onNavigate("edit-profile")} />
+      <ProfileHero profile={profile} coverId={coverId} coverOptions={coverOptions} actionLabel="UBAH" onAction={() => onNavigate("edit-profile")} />
       <main className="mx-auto max-w-6xl space-y-7 px-4 py-8 sm:px-6">
         <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-xl border border-sky-100 bg-white p-5 shadow-[0_14px_38px_rgba(15,58,125,0.07)]">
@@ -545,7 +730,15 @@ const validateProfileDraft = (draft) => {
   );
 };
 
-export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
+export function PelangganEditProfile({
+  profile,
+  coverId = DEFAULT_PROFILE_COVER_ID,
+  coverOptions = [],
+  onCoverSave,
+  onSave,
+  onNavigate,
+  onToast,
+}) {
   const [draft, setDraft] = useState(profile);
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
@@ -555,6 +748,9 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [coverDraftId, setCoverDraftId] = useState(coverId);
+  const [coverPickerOpen, setCoverPickerOpen] = useState(false);
+  const [coverSaving, setCoverSaving] = useState(false);
   const fileInputRef = useRef(null);
   const input = "h-11 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-700 outline-none transition-colors focus:border-[#0D6EFD] focus:ring-4 focus:ring-sky-100";
   const inputErrorClass = "border-red-300 bg-red-50/40 focus:border-red-500 focus:ring-red-100";
@@ -566,6 +762,15 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
   const fieldErrorText = "mt-1.5 text-xs font-semibold text-red-600";
   const getInputClass = (field) => `${input} ${fieldErrors[field] ? inputErrorClass : ""}`;
   const getTextareaClass = (field) => `${textarea} ${fieldErrors[field] ? inputErrorClass : ""}`;
+  const visibleCoverId = coverPickerOpen ? coverDraftId : coverId;
+  const activeCover = getProfileCoverOption(coverOptions, visibleCoverId);
+  const headerPhotoButtonStyle = {
+    backgroundColor: activeCover.accent,
+    borderColor: activeCover.isLight ? "rgba(18,48,79,0.18)" : "rgba(255,255,255,0.9)",
+  };
+  const photoActionButtonClass = activeCover.isLight
+    ? "border-[#12304f]/20 bg-white/75 text-[#12304f] hover:bg-white"
+    : "border-white/75 bg-transparent text-white hover:bg-white/20";
 
   const updateDraft = (key, value) => {
     const nextValue = key === "telepon" ? value.replace(/[^\d+]/g, "").slice(0, 15) : value;
@@ -581,10 +786,89 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
     if (photoPreview) URL.revokeObjectURL(photoPreview);
   }, [photoPreview]);
 
+  useEffect(() => {
+    if (!coverPickerOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key !== "Escape") return;
+      setCoverDraftId(coverId);
+      setCoverPickerOpen(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [coverId, coverPickerOpen]);
+
+  const openCoverPicker = () => {
+    setCoverDraftId(coverId);
+    setCoverPickerOpen(true);
+  };
+
+  const cancelCoverPicker = () => {
+    setCoverDraftId(coverId);
+    setCoverPickerOpen(false);
+  };
+
+  const saveCover = async () => {
+    const nextCoverId = getProfileCoverOption(coverOptions, coverDraftId).id;
+    if (typeof onCoverSave !== "function") {
+      setCoverPickerOpen(false);
+      return;
+    }
+
+    setCoverSaving(true);
+    try {
+      await onCoverSave(nextCoverId);
+      setCoverPickerOpen(false);
+    } catch (err) {
+      const message = err.message || "Gagal menyimpan cover profil.";
+      setError(message);
+      onToast?.("error", message);
+    } finally {
+      setCoverSaving(false);
+    }
+  };
+
+  const resetCover = () => {
+    setCoverDraftId(DEFAULT_PROFILE_COVER_ID);
+  };
+
+  const autoSavePhoto = async (file) => {
+    setSaving(true);
+    setUploadProgress(1);
+
+    try {
+      const nextProfile = await onSave(draft, file, {
+        photoOnly: true,
+        onUploadProgress: setUploadProgress,
+      });
+
+      setDraft((current) => ({
+        ...current,
+        foto: nextProfile?.foto || current.foto,
+      }));
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+      setPhotoFile(null);
+      setPhotoPreview("");
+      setPhotoMarkedForDelete(false);
+      setError("");
+    } catch (err) {
+      const message = err.message || "Gagal mengunggah foto profil.";
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+      setPhotoFile(null);
+      setPhotoPreview("");
+      setError(message);
+      onToast?.("error", message);
+    } finally {
+      setSaving(false);
+      setUploadProgress(0);
+    }
+  };
+
   const handlePhotoChange = (event) => {
     const file = event.target.files?.[0] || null;
     event.target.value = "";
-    if (!file) return;
+    if (!file || saving) return;
 
     const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
@@ -603,6 +887,7 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
     setPhotoMarkedForDelete(false);
     setUploadProgress(0);
     setError("");
+    autoSavePhoto(file);
   };
 
   const handleDeletePhoto = () => {
@@ -660,14 +945,20 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
       <ProfileHero
         profile={avatarProfile}
         avatarPreviewSrc={photoPreview}
+        coverId={visibleCoverId}
+        coverOptions={coverOptions}
         hideIdentity
         onAction={() => onNavigate("dashboard")}
+        secondaryActionLabel="Edit Cover"
+        onSecondaryAction={openCoverPicker}
+        secondaryActionIcon={<PaletteIcon />}
         avatarControls={(
           <button
             type="button"
             onClick={() => !saving && fileInputRef.current?.click()}
             disabled={saving}
-            className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#0D6EFD] text-white shadow-lg transition-colors hover:bg-[#075bd8] disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-9 w-9 items-center justify-center rounded-full border-2 text-white shadow-lg transition-colors hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            style={headerPhotoButtonStyle}
             aria-label="Ganti foto profil"
             title="Ganti foto profil"
           >
@@ -681,8 +972,8 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
             disabled={saving}
             className={`inline-flex min-h-9 items-center justify-center rounded-lg border px-4 text-xs font-extrabold backdrop-blur transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
               photoMarkedForDelete
-                ? "border-white/75 bg-white/10 text-white hover:bg-white/20"
-                : "border-white/75 bg-transparent text-white hover:border-red-100 hover:bg-red-500/20"
+                ? photoActionButtonClass
+                : `${photoActionButtonClass} hover:border-red-100 hover:bg-red-500/20`
             }`}
           >
             {photoMarkedForDelete ? "Batal Hapus" : "Hapus"}
@@ -699,6 +990,16 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
       />
       {photoFile ? <p className="sr-only">Foto dipilih: {photoFile.name}</p> : null}
       {photoMarkedForDelete ? <p className="sr-only">Foto profil akan dihapus setelah disimpan.</p> : null}
+      <ProfileCoverPicker
+        open={coverPickerOpen}
+        selectedId={coverDraftId}
+        coverOptions={coverOptions}
+        saving={coverSaving}
+        onSelect={setCoverDraftId}
+        onSave={saveCover}
+        onCancel={cancelCoverPicker}
+        onReset={resetCover}
+      />
       <main className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[190px_1fr] md:gap-8">
         <ProfileSideNav active="edit-profile" onNavigate={onNavigate} />
         <section className="rounded-xl border border-sky-100 bg-white p-5 shadow-[0_14px_38px_rgba(15,58,125,0.07)] sm:p-7">
@@ -821,7 +1122,7 @@ export function PelangganEditProfile({ profile, onSave, onNavigate, onToast }) {
   );
 }
 
-export function PelangganNotifications({ profile, onNavigate }) {
+export function PelangganNotifications({ profile, coverId = DEFAULT_PROFILE_COVER_ID, coverOptions = [], onNavigate }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -908,7 +1209,7 @@ export function PelangganNotifications({ profile, onNavigate }) {
 
   return (
     <>
-      <ProfileHero profile={profile} onAction={() => onNavigate("dashboard")} />
+      <ProfileHero profile={profile} coverId={coverId} coverOptions={coverOptions} onAction={() => onNavigate("dashboard")} />
       <main className="mx-auto min-h-[300px] max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_16px_42px_rgba(15,58,125,0.08)]">
           <div className="flex flex-col gap-4 border-b border-sky-100 bg-gradient-to-r from-white to-sky-50/80 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -1003,7 +1304,7 @@ function validatePasswordRules(value = "") {
   return errors;
 }
 
-export function PelangganPassword({ profile = {}, onNavigate = () => {} }) {
+export function PelangganPassword({ profile = {}, coverId = DEFAULT_PROFILE_COVER_ID, coverOptions = [], onNavigate = () => {} }) {
   const [form, setForm] = useState({
     current_password: "",
     new_password: "",
@@ -1099,7 +1400,7 @@ export function PelangganPassword({ profile = {}, onNavigate = () => {} }) {
 
   return (
     <>
-      <ProfileHero profile={profile} onAction={() => onNavigate("dashboard")} />
+      <ProfileHero profile={profile} coverId={coverId} coverOptions={coverOptions} onAction={() => onNavigate("dashboard")} />
       <main className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[190px_1fr] md:gap-8">
         <ProfileSideNav active="password" onNavigate={onNavigate} />
         <section className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-[0_16px_42px_rgba(15,58,125,0.08)]">

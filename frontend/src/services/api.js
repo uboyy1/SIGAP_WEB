@@ -651,6 +651,14 @@ export const updatePelangganProfile = (data) =>
     body: JSON.stringify(data),
   });
 
+export const getPelangganProfileCovers = () => request('/pelanggan/profile-covers');
+
+export const updatePelangganProfileCover = (profileCoverId) =>
+  request('/pelanggan/profile/cover', {
+    method: 'PUT',
+    body: JSON.stringify({ profile_cover_id: profileCoverId }),
+  });
+
 export const updatePelangganPassword = (data) =>
   request('/pelanggan/password', {
     method: 'PUT',

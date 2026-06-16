@@ -16,6 +16,11 @@ const {
 const { savePelangganActivity } = require('../aktivitasLogController');
 const { createNotificationWithCooldown } = require('../../utils/notificationHelper');
 const { sendVerificationEmail } = require('../../utils/emailService');
+const {
+  DEFAULT_PROFILE_COVER_ID,
+  PROFILE_COVER_OPTIONS,
+  getProfileCoverOption
+} = require('../../utils/profileCoverOptions');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRES_IN || process.env.JWT_EXPIRE || '7d'
@@ -307,6 +312,38 @@ const updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.error('Pelanggan update profile error:', error);
+    return res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+  }
+};
+
+const getProfileCovers = async (req, res) => res.status(200).json({
+  success: true,
+  data: {
+    default_cover_id: DEFAULT_PROFILE_COVER_ID,
+    active_cover_id: req.user?.profile_cover_id || DEFAULT_PROFILE_COVER_ID,
+    covers: PROFILE_COVER_OPTIONS
+  }
+});
+
+const updateProfileCover = async (req, res) => {
+  try {
+    const coverId = getProfileCoverOption(req.body.profile_cover_id).id;
+    const user = await User.findByPk(req.user.id);
+    await user.update({ profile_cover_id: coverId });
+
+    await savePelangganActivity(req, user, 'pelanggan_update_profile', 'Pelanggan memperbarui cover profil');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Cover profil berhasil diperbarui',
+      data: {
+        user: sanitizeUser(user),
+        active_cover_id: coverId,
+        cover: getProfileCoverOption(coverId)
+      }
+    });
+  } catch (error) {
+    console.error('Pelanggan update profile cover error:', error);
     return res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
   }
 };
@@ -774,6 +811,8 @@ module.exports = {
   logout,
   me,
   updateProfile,
+  getProfileCovers,
+  updateProfileCover,
   uploadPhoto,
   deletePhoto,
   updatePassword,
