@@ -8,6 +8,12 @@ import {
   markPelangganNotificationAsRead,
   updatePelangganPassword,
 } from "../../services/api";
+import {
+  compressImageForUpload,
+  isAllowedImageType,
+  MAX_IMAGE_INPUT_LABEL,
+  MAX_IMAGE_INPUT_SIZE,
+} from "../../utils/imageCompression";
 
 const reportStatusStyles = {
   menunggu: "bg-amber-50 text-amber-700 ring-amber-200",
@@ -864,29 +870,36 @@ export function PelangganEditProfile({
     }
   };
 
-  const handlePhotoChange = (event) => {
+  const handlePhotoChange = async (event) => {
     const file = event.target.files?.[0] || null;
     event.target.value = "";
     if (!file || saving) return;
 
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
+    if (!isAllowedImageType(file)) {
       setError("Format foto tidak didukung. Gunakan JPG, PNG, atau WEBP.");
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      setError("Ukuran foto maksimal 2MB.");
+    if (file.size > MAX_IMAGE_INPUT_SIZE) {
+      setError(`Ukuran foto maksimal ${MAX_IMAGE_INPUT_LABEL}.`);
+      return;
+    }
+
+    let uploadFile;
+    try {
+      uploadFile = await compressImageForUpload(file);
+    } catch {
+      setError("Gagal mengompres foto. Coba gunakan foto lain.");
       return;
     }
 
     if (photoPreview) URL.revokeObjectURL(photoPreview);
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
+    setPhotoFile(uploadFile);
+    setPhotoPreview(URL.createObjectURL(uploadFile));
     setPhotoMarkedForDelete(false);
     setUploadProgress(0);
     setError("");
-    autoSavePhoto(file);
+    autoSavePhoto(uploadFile);
   };
 
   const handleDeletePhoto = () => {

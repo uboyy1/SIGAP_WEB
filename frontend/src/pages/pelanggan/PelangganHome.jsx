@@ -7,6 +7,13 @@
   import onlineReportImage from "../../assets/features/Pelaporan online.png";
   import uploadProofImage from "../../assets/features/Upload bukti foto.png";
   import { API_ORIGIN, getPelangganKategori, getPelangganLaporanComments, uploadPelangganLaporan } from "../../services/api";
+  import {
+    compressImageForUpload,
+    isAllowedImageType,
+    MAX_IMAGE_INPUT_LABEL,
+    MAX_IMAGE_INPUT_SIZE,
+    TARGET_IMAGE_UPLOAD_LABEL,
+  } from "../../utils/imageCompression";
 
   const reportFlowSteps = [
     {
@@ -865,9 +872,8 @@
       if (!formData.location.trim()) errors.location = "Lokasi gangguan wajib diisi.";
       if (!formData.photoFile) errors.photo = "Foto gangguan wajib diunggah.";
       if (formData.photoFile) {
-        const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-        if (!validTypes.includes(formData.photoFile.type)) errors.photo = "Format foto harus JPG, PNG, atau WEBP.";
-        if (formData.photoFile.size > 2 * 1024 * 1024) errors.photo = "Ukuran foto maksimal 2MB.";
+        if (!isAllowedImageType(formData.photoFile)) errors.photo = "Format foto harus JPG, PNG, atau WEBP.";
+        if (formData.photoFile.size > MAX_IMAGE_INPUT_SIZE) errors.photo = `Ukuran foto maksimal ${MAX_IMAGE_INPUT_LABEL}.`;
       }
 
       return errors;
@@ -1124,7 +1130,7 @@
                     type="file"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     className="sr-only"
-                    onChange={(event) => {
+                    onChange={async (event) => {
                       const file = event.target.files?.[0] || null;
                       event.target.value = "";
 
@@ -1134,23 +1140,32 @@
                         return;
                       }
 
-                      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-                      if (!validTypes.includes(file.type)) {
+                      if (!isAllowedImageType(file)) {
                         updateForm("photoName", "");
                         updateForm("photoFile", null);
                         setFormErrors((current) => ({ ...current, photo: "Format foto harus JPG, PNG, atau WEBP." }));
                         return;
                       }
 
-                      if (file.size > 2 * 1024 * 1024) {
+                      if (file.size > MAX_IMAGE_INPUT_SIZE) {
                         updateForm("photoName", "");
                         updateForm("photoFile", null);
-                        setFormErrors((current) => ({ ...current, photo: "Ukuran foto maksimal 2MB." }));
+                        setFormErrors((current) => ({ ...current, photo: `Ukuran foto maksimal ${MAX_IMAGE_INPUT_LABEL}.` }));
                         return;
                       }
 
-                      updateForm("photoName", file.name);
-                      updateForm("photoFile", file);
+                      let uploadFile;
+                      try {
+                        uploadFile = await compressImageForUpload(file);
+                      } catch {
+                        updateForm("photoName", "");
+                        updateForm("photoFile", null);
+                        setFormErrors((current) => ({ ...current, photo: "Gagal mengompres foto. Coba gunakan foto lain." }));
+                        return;
+                      }
+
+                      updateForm("photoName", uploadFile.name || file.name);
+                      updateForm("photoFile", uploadFile);
                       setUploadProgress(0);
                     }}
                 />
@@ -1163,7 +1178,7 @@
                 </span>
                 <span className="min-w-0 text-left">
                   <span className="block text-sm font-semibold">{formData.photoName ? "Foto dipilih" : "Upload Foto Gangguan"}</span>
-                  <span className="mt-0.5 block truncate text-xs font-normal text-slate-500">{formData.photoName || "Pilih gambar gangguan dari perangkat"}</span>
+                  <span className="mt-0.5 block truncate text-xs font-normal text-slate-500">{formData.photoName || `Maks ${MAX_IMAGE_INPUT_LABEL}, otomatis dikompres ke sekitar ${TARGET_IMAGE_UPLOAD_LABEL}`}</span>
                 </span>
               </label>
               {formErrors.photo ? <p className={errorText}>{formErrors.photo}</p> : null}

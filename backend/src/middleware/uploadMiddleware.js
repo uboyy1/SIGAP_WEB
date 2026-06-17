@@ -3,7 +3,7 @@ const path = require('path');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
 const allowedMimeTypes = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
 const allowedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const allowedFormats = ['jpg', 'jpeg', 'png', 'webp'];

@@ -443,9 +443,6 @@ export default function LaporanMasuk() {
                     <td className="px-5 py-4 font-medium text-gray-800 dark:text-white">{item.pelanggan?.nama_lengkap || '-'}</td>
                     <td className="px-5 py-4 text-gray-800 dark:text-white whitespace-nowrap">
                       <div>{item.kategori}</div>
-                      <span className="mt-1 inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                        Estimasi: {item.estimasi_penanganan || '2-6 jam'}
-                      </span>
                     </td>
                     <td className={`px-5 py-4 whitespace-nowrap ${getPriorityTextColor(item.prioritas)}`}>
                       {priorityDisplay[item.prioritas] || item.prioritas || '-'}
