@@ -720,6 +720,7 @@ const validateProfileField = (key, value = "") => {
   if (key === "nama" && (text.length < 2 || text.length > 100)) return "Nama lengkap harus 2-100 karakter.";
   if (key === "username" && text && !/^[a-zA-Z0-9._-]{3,50}$/.test(text)) return "Username harus 3-50 karakter dan hanya memakai huruf, angka, titik, garis bawah, atau tanda hubung.";
   if (key === "email" && text && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) return "Format email tidak valid.";
+  if (key === "email" && text && !text.toLowerCase().endsWith("@gmail.com")) return "Email harus menggunakan @gmail.com.";
   if (key === "telepon" && text && !/^(?:\+?62|0)?8\d{8,11}$/.test(text)) return "Nomor telepon Indonesia tidak valid.";
   if (key === "alamat" && text.length > 500) return "Alamat maksimal 500 karakter.";
   if (key === "bio" && text.length > 300) return "Bio maksimal 300 karakter.";
@@ -945,6 +946,16 @@ export function PelangganEditProfile({
       });
     } catch (err) {
       const message = err.message || "Gagal menyimpan profil.";
+      if (Array.isArray(err.errors) && err.errors.length > 0) {
+        const fieldMap = {
+          nama_lengkap: "nama",
+          no_telp: "telepon",
+        };
+        setFieldErrors((current) => ({
+          ...current,
+          ...Object.fromEntries(err.errors.map((item) => [fieldMap[item.field] || item.field, item.message])),
+        }));
+      }
       setError(message);
       onToast?.("error", message);
     } finally {

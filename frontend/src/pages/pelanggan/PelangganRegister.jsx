@@ -5,7 +5,7 @@ import { pelangganTermsSections } from "../../constants/pelangganTermsContent";
 import { pelangganRegister } from "../../services/api";
 import {
   normalizeDigits,
-  validateEmail,
+  validateGmail,
   validatePassword,
   validatePasswordConfirmation,
   validatePhone,
@@ -62,7 +62,7 @@ const validateRegisterField = (field, value, form, { required = false } = {}) =>
   }
   if (field === "no_telp") return validatePhone(text, { required, label: "Nomor telepon" });
   if (field === "username" && text && !/^[a-zA-Z0-9._-]{3,50}$/.test(text)) return "Username harus 3-50 karakter dan hanya memakai huruf, angka, titik, garis bawah, atau tanda hubung.";
-  if (field === "email") return validateEmail(text, { required });
+  if (field === "email") return validateGmail(text, { required });
   if (field === "password") return validatePassword(value, { required, label: "Kata sandi" });
   if (field === "confirm_password") return validatePasswordConfirmation(form.password, value, { required, label: "Konfirmasi kata sandi" });
   if (field === "alamat" && text.length > 500) return "Alamat maksimal 500 karakter.";
@@ -200,6 +200,12 @@ export default function PelangganRegister({ onBack, onRegistered }) {
       const response = await pelangganRegister(payload);
       await onRegistered?.({ identifier: payload.no_langganan, message: response?.message });
     } catch (err) {
+      if (Array.isArray(err.errors) && err.errors.length > 0) {
+        setFieldErrors((current) => ({
+          ...current,
+          ...Object.fromEntries(err.errors.map((item) => [item.field, item.message])),
+        }));
+      }
       setError(err.message || "Registrasi gagal. Periksa kembali data Anda.");
     } finally {
       setLoading(false);
@@ -291,7 +297,7 @@ export default function PelangganRegister({ onBack, onRegistered }) {
                 </Field>
 
                 <Field label="Email*">
-                  <input type="email" className={getInputClass("email")} value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="Masukkan email" required />
+                  <input type="email" className={getInputClass("email")} value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="nama@gmail.com" required />
                   {renderFieldError("email")}
                 </Field>
 

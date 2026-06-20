@@ -13,6 +13,14 @@ export const validateEmail = (value, { required = false, label = "Email" } = {})
   return emailPattern.test(text) ? "" : "Format email belum sesuai.";
 };
 
+export const validateGmail = (value, { required = false, label = "Email" } = {}) => {
+  const emailError = validateEmail(value, { required, label });
+  if (emailError) return emailError;
+
+  const text = String(value || "").trim().toLowerCase();
+  return text.endsWith("@gmail.com") ? "" : `${label} harus menggunakan @gmail.com.`;
+};
+
 export const validatePhone = (value, { required = false, label = "Nomor telepon" } = {}) => {
   const text = String(value || "").trim();
   if (!text) return required ? requiredMessage(label) : "";

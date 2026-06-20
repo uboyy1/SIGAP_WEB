@@ -158,7 +158,7 @@ export default function usePelangganData({ authenticated = false } = {}) {
     return () => {
       ignore = true;
     };
-  }, [loadReportData, visibleLimit]);
+  }, [authenticated, loadReportData, visibleLimit]);
 
   useEffect(() => {
     let ignore = false;

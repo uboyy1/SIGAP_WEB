@@ -100,6 +100,35 @@ const sanitizeUser = (user) => {
   return plain;
 };
 
+const buildDuplicateUserErrors = (users, values = {}) => {
+  const errors = [];
+  const rows = Array.isArray(users) ? users : [];
+  const normalizedEmail = String(values.email || '').trim().toLowerCase();
+  const normalizedNoLangganan = String(values.no_langganan || '').trim();
+  const normalizedUsername = String(values.username || '').trim().toLowerCase();
+
+  if (normalizedEmail && rows.some((user) => String(user.email || '').trim().toLowerCase() === normalizedEmail)) {
+    errors.push({ field: 'email', message: 'Email sudah terdaftar. Gunakan email Gmail lain.' });
+  }
+
+  if (normalizedNoLangganan && rows.some((user) => String(user.no_langganan || '').trim() === normalizedNoLangganan)) {
+    errors.push({ field: 'no_langganan', message: 'Nomor langganan sudah terdaftar.' });
+  }
+
+  if (normalizedUsername && rows.some((user) => String(user.username || '').trim().toLowerCase() === normalizedUsername)) {
+    errors.push({ field: 'username', message: 'Username sudah digunakan.' });
+  }
+
+  return errors;
+};
+
+const sendDuplicateResponse = (res, errors, fallbackMessage) => res.status(409).json({
+  success: false,
+  code: 'DUPLICATE_PELANGGAN_DATA',
+  message: fallbackMessage,
+  errors
+});
+
 const register = async (req, res) => {
   try {
     const {
@@ -114,28 +143,33 @@ const register = async (req, res) => {
       alamat
     } = req.body;
 
-    const existing = await User.findOne({
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const normalizedNoLangganan = String(no_langganan || '').trim();
+    const trimmedUsername = username ? String(username).trim() : '';
+    const existing = await User.findAll({
       where: {
         [Op.or]: [
-          { email },
-          { no_langganan },
-          ...(username ? [{ username }] : [])
+          { email: normalizedEmail },
+          { no_langganan: normalizedNoLangganan },
+          ...(trimmedUsername ? [{ username: trimmedUsername }] : [])
         ]
       }
     });
 
-    if (existing) {
-      return res.status(409).json({
-        success: false,
-        message: 'Email, username, atau nomor langganan sudah terdaftar'
+    if (existing.length > 0) {
+      const errors = buildDuplicateUserErrors(existing, {
+        email: normalizedEmail,
+        no_langganan: normalizedNoLangganan,
+        username: trimmedUsername
       });
+      return sendDuplicateResponse(res, errors, 'Email, username, atau nomor langganan sudah terdaftar');
     }
 
     const user = await User.create({
-      no_langganan,
+      no_langganan: normalizedNoLangganan,
       nama_lengkap,
-      username: username || null,
-      email,
+      username: trimmedUsername || null,
+      email: normalizedEmail,
       password,
       no_telp,
       jenis_kelamin,
@@ -294,10 +328,8 @@ const updateProfile = async (req, res) => {
       });
 
       if (duplicate) {
-        return res.status(409).json({
-          success: false,
-          message: 'Email atau username sudah digunakan'
-        });
+        const errors = buildDuplicateUserErrors([duplicate], payload);
+        return sendDuplicateResponse(res, errors, 'Email atau username sudah digunakan');
       }
     }
 

@@ -28,6 +28,19 @@ const hasForbiddenUsernameWord = (value = '') => {
   return forbiddenUsernameWords.some((word) => normalized.includes(word));
 };
 
+const gmailRule = (field = 'email') => body(field)
+  .trim()
+  .notEmpty().withMessage('Email harus diisi')
+  .isLength({ max: 100 }).withMessage('Email maksimal 100 karakter')
+  .isEmail().withMessage('Format email tidak valid')
+  .normalizeEmail()
+  .custom((value) => {
+    if (!String(value || '').toLowerCase().endsWith('@gmail.com')) {
+      throw new Error('Email harus menggunakan @gmail.com');
+    }
+    return true;
+  });
+
 const phoneRule = () => body('no_telp')
   .trim()
   .matches(/^(?:\+?62|0)?8\d{8,11}$/).withMessage('Nomor telepon harus nomor Indonesia yang valid');
@@ -62,12 +75,7 @@ const registerValidator = [
       }
       return true;
     }),
-  body('email')
-    .trim()
-    .notEmpty().withMessage('Email harus diisi')
-    .isLength({ max: 100 }).withMessage('Email maksimal 100 karakter')
-    .isEmail().withMessage('Format email tidak valid')
-    .normalizeEmail(),
+  gmailRule('email'),
   passwordRule,
   phoneRule().notEmpty().withMessage('Nomor telepon harus diisi'),
   body('jenis_kelamin').optional({ checkFalsy: true }).isIn(['Laki-laki', 'Perempuan']).withMessage('Jenis kelamin tidak valid'),
@@ -80,7 +88,7 @@ const loginValidator = [
     .trim()
     .notEmpty().withMessage('Nomor langganan harus diisi')
     .matches(/^\d{6,10}$/).withMessage('Nomor langganan harus 6 hingga 10 digit angka'),
-  body('email').optional({ checkFalsy: true }).trim().isEmail().withMessage('Format email tidak valid').normalizeEmail(),
+  gmailRule('email').optional({ checkFalsy: true }),
   body('password').notEmpty().withMessage('Password harus diisi')
 ];
 
@@ -97,7 +105,7 @@ const updateProfileValidator = [
       }
       return true;
     }),
-  body('email').optional({ checkFalsy: true }).trim().isLength({ max: 100 }).withMessage('Email maksimal 100 karakter').isEmail().withMessage('Format email tidak valid').normalizeEmail(),
+  gmailRule('email').optional({ checkFalsy: true }),
   optionalPhoneRule('no_telp'),
   body('jenis_kelamin').optional({ checkFalsy: true }).isIn(['Laki-laki', 'Perempuan']).withMessage('Jenis kelamin tidak valid'),
   body('tanggal_lahir').optional({ checkFalsy: true }).isISO8601().withMessage('Tanggal lahir tidak valid'),
